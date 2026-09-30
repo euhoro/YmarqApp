@@ -39,7 +39,7 @@ Every behaviour found in the code, and what it becomes.
 
 | # | Feature (legacy behaviour) | Legacy location | New implementation (Expo/TS) | Status |
 |---|---|---|---|---|
-| F0 | **Build & project setup**: Gradle 2.1 / AGP 0.13 / jcenter | `build.gradle`, `app/build.gradle` | Expo app (TypeScript strict), Expo Router, ESLint + Prettier + `tsc`, Jest. Legacy Android sources removed. | ⬜ |
+| F0 | **Build & project setup**: Gradle 2.1 / AGP 0.13 / jcenter | `build.gradle`, `app/build.gradle` | Expo app (TypeScript strict), Expo Router, ESLint + Prettier + `tsc`, Jest. Legacy Android sources removed. | ✅ scaffold |
 | F1 | **App shell**: single Activity, "Ymarq" label, launcher icon, Holo/Material theme | `MainActivity`, `styles.xml`, `drawable-*` | Expo Router root layout, React Native Paper (Material 3) theme with light/dark mode, app icon + splash rebuilt from `ic_launcher-web.png` / `ym_logo.jpg` | ⬜ |
 | F2 | **Product feed**: on screen open, GET products for a hardcoded user code `1111111111` and show `"Description - Hashtag"` text rows | `FetchProductsTask`, `getProductDataFromJson` | `feed` route: a `FlatList` of product cards with image, description and hashtag, plus loading/empty/error states ← `useProducts()` (TanStack Query) ← `ProductRepository` interface (fake now, then Firestore; the legacy API later if its sources are found). The signed-in user replaces the hardcoded code. | ⬜ |
 | F3 | **Refresh**: overflow-menu "Refresh" re-fetches, but with a *different* hardcoded code `1222222222` (bug) | `onOptionsItemSelected` | Pull-to-refresh (`RefreshControl`) plus a header action, using the same user as F2 | ⬜ |
@@ -47,7 +47,7 @@ Every behaviour found in the code, and what it becomes.
 | F5 | **Identity detection**: scans `AccountManager` accounts for an email-shaped name and toasts "Loging in as …". Dead code that would read the phone number through `TelephonyManager`. | `onCreateView` | Removed: modern Android hides accounts, and phone-number access is restricted. Replaced by real sign-in (F6). | 🗑️ |
 | F6 | **Logon**: POSTs the hardcoded form `Id=1091&Email=someval1091@gmail.com` to Azure `/home/Logon`, ignores the response, and always toasts "Logged in". | `LogonTask`, `requestUrl` | Firebase Auth: **phone OTP first** (no SMS permission needed), Google second. A sign-in route gates the app, and the session persists across restarts. | ⬜ |
 | F7 | **Settings** menu item (no-op) | `menu_main.xml` | `settings` route: account/sign-out, theme, app version. Kept minimal. | ⬜ |
-| F8 | **Data models**: `Product(Description, Hashtag, Id, Image, PublisherId)`, `User(Id, Email)` | `DataProduct`, `DataUser` | TypeScript types + `zod` schemas that parse the legacy PascalCase JSON into camelCase domain objects | ⬜ |
+| F8 | **Data models**: `Product(Description, Hashtag, Id, Image, PublisherId)`, `User(Id, Email)` | `DataProduct`, `DataUser` | TypeScript types + `zod` schemas that parse the legacy PascalCase JSON into camelCase domain objects (`src/domain/`) | ✅ scaffold |
 | F9 | *README-only, not implemented:* **manage classifieds** (create/edit/delete a listing with photo + description + hashtag) | README | New create-listing flow: F4 photo → form → upload to Firebase Storage | ⏸️ later (Q3) |
 | F10 | *README-only, not implemented:* **communication between friends** (friends graph, sharing, messaging) | README | Phone-number contact linking (WhatsApp-style, `expo-contacts`), then messaging | ⏸️ later (Q3) |
 
@@ -100,13 +100,14 @@ docs/REVIVAL_2026.md   # this file
 - [x] Resolve D-B, D-C, D-D
 
 ### Phase 1: Foundation
-- [ ] F0: Expo scaffold, tooling, route stubs, service interfaces + fakes, remove legacy Android
+- [x] F0: Expo scaffold (SDK 57), tooling, route stubs, service interfaces + fakes, data-source switch, legacy API repository, remove legacy Android
 - [ ] CI: GitHub Actions (lint, typecheck, test)
 - [ ] Agent workflow, issue templates, labels, Project board
 - [ ] Accounts and secrets (Firebase apps, Expo, Vercel)
 
 ### Phase 2: Port existing features (1:1 behaviour, done properly)
-- [ ] F8, F1, F2, F3, F4, F6, F7
+- [x] F8 (done in the scaffold)
+- [ ] F1, F2, F3, F4, F6, F7
 
 ### Phase 3: Complete the product vision
 - [ ] F9: Create/edit/delete listing with photo upload
@@ -162,11 +163,10 @@ docs/REVIVAL_2026.md   # this file
 ### Issue breakdown
 | Wave | Issue | Type | Depends on |
 |---|---|---|---|
-| 0 | F0 scaffold: Expo + TS + Router + Paper + Query + zod + Firebase libs, lint/test config, `npm run verify`, route stubs, `ProductRepository`/`AuthService` interfaces + fakes, remove legacy Android | pairing | – |
+| 0 | ✅ F0 scaffold: Expo + TS + Router + Paper + Query + zod + Firebase JS SDK, lint/test config, `npm run verify`, route stubs, `ProductRepository`/`AuthService` interfaces + fakes, data-source switch, remove legacy Android | pairing | – |
 | 0 | CI: GitHub Actions running `npm run verify` on PRs | agent-ready | scaffold |
 | 0 | Agent workflow + issue templates + labels + Project board | pairing | – |
-| 0 | Register Firebase iOS + Web apps; Expo account + `EXPO_TOKEN`; Vercel project; `ANTHROPIC_API_KEY` | pairing (human only) | – |
-| 1 | F8: domain types + zod schemas + tests using the legacy JSON sample | agent-ready | scaffold |
+| 0 | Register Firebase iOS + Web apps ✅; Expo account `ymarq` ✅; Vercel ✅; `EXPO_TOKEN` secret; agent auth (deferred, §7) | pairing (human only) | – |
 | 1 | F2a: `useProducts()` hook over `ProductRepository` + fake data + tests | agent-ready | scaffold |
 | 1 | F2b: Feed UI (cards, loading/empty/error) + component tests | agent-ready | scaffold |
 | 1 | F1: theme (light/dark), icon + splash from `ym_logo` | agent-ready | scaffold |
