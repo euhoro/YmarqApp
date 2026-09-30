@@ -101,7 +101,7 @@ docs/REVIVAL_2026.md   # this file
 
 ### Phase 1: Foundation
 - [x] F0: Expo scaffold (SDK 57), tooling, route stubs, service interfaces + fakes, data-source switch, legacy API repository, remove legacy Android
-- [ ] CI: GitHub Actions (lint, typecheck, test)
+- [x] CI: GitHub Actions: lint, typecheck, format, Jest unit + router integration tests, expo-doctor, web build + Playwright smoke tests
 - [ ] Agent workflow, issue templates, labels, Project board
 - [ ] Accounts and secrets (Firebase apps, Expo, Vercel)
 
@@ -164,7 +164,7 @@ docs/REVIVAL_2026.md   # this file
 | Wave | Issue | Type | Depends on |
 |---|---|---|---|
 | 0 | ✅ F0 scaffold: Expo + TS + Router + Paper + Query + zod + Firebase JS SDK, lint/test config, `npm run verify`, route stubs, `ProductRepository`/`AuthService` interfaces + fakes, data-source switch, remove legacy Android | pairing | – |
-| 0 | CI: GitHub Actions running `npm run verify` on PRs | agent-ready | scaffold |
+| 0 | ✅ CI: GitHub Actions (`verify` + `e2e-web` jobs) on PRs and `master` | agent-ready | scaffold |
 | 0 | Agent workflow + issue templates + labels + Project board | pairing | – |
 | 0 | Register Firebase iOS + Web apps ✅; Expo account `ymarq` ✅; Vercel ✅; `EXPO_TOKEN` secret; agent auth (deferred, §7) | pairing (human only) | – |
 | 1 | F2a: `useProducts()` hook over `ProductRepository` + fake data + tests | agent-ready | scaffold |
