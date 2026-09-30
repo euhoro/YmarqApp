@@ -8,11 +8,12 @@ test('feed loads and navigates to settings', async ({ page }) => {
   await page.getByText('Settings', { exact: true }).click();
 
   await expect(page).toHaveURL(/\/settings$/);
-  await expect(page.getByText('Settings (coming in F7)')).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Settings' })).toBeVisible();
 });
 
 test('deep link to sign-in works', async ({ page }) => {
   await page.goto('/sign-in');
 
-  await expect(page.getByText('Phone sign-in')).toBeVisible();
+  await expect(page).toHaveURL(/\/sign-in$/);
+  await expect(page.getByRole('heading', { name: 'Sign in' })).toBeVisible();
 });

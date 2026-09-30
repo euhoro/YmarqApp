@@ -1,7 +1,11 @@
 # Ymarq
 
 Classifieds shared between friends. Being revived in 2026 as one **React Native + Expo (TypeScript)** app
-for **Android, iOS and Web**. The plan and progress tracker: [`docs/REVIVAL_2026.md`](docs/REVIVAL_2026.md).
+for **Android, iOS and Web**.
+
+- **Developer guide** (run, test, workflow): [`docs/DEVELOPER_GUIDE.md`](docs/DEVELOPER_GUIDE.md)
+- **Plan and decisions:** [`docs/REVIVAL_2026.md`](docs/REVIVAL_2026.md)
+- **Roadmap and what to work on next:** [issue #22](https://github.com/euhoro/YmarqApp/issues/22)
 
 ## Run it
 

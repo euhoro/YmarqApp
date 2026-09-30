@@ -1,0 +1,75 @@
+name: Feature / task
+description: A unit of work small enough for one PR. Fill every section so anyone (or an agent) can do it without asking questions.
+labels: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Plan and decisions: `docs/REVIVAL_2026.md` · Rules: `AGENTS.md` · Workflow: `docs/DEVELOPER_GUIDE.md`.
+        Title format: `F<n>: short outcome` for features from the tracker.
+  - type: textarea
+    id: context
+    attributes:
+      label: Context
+      description: What exists today and why this matters. Link decisions.
+    validations:
+      required: true
+  - type: textarea
+    id: goal
+    attributes:
+      label: Goal
+      description: One or two sentences describing the outcome.
+    validations:
+      required: true
+  - type: textarea
+    id: scope
+    attributes:
+      label: Files in scope
+      description: The files this issue may create or change. Parallel issues must not overlap.
+      placeholder: '- `src/features/feed/useProducts.ts`'
+    validations:
+      required: true
+  - type: textarea
+    id: out-of-scope
+    attributes:
+      label: Out of scope
+    validations:
+      required: true
+  - type: textarea
+    id: criteria
+    attributes:
+      label: Acceptance criteria
+      description: Checkable statements. Include the tests expected.
+      placeholder: '- [ ] ...'
+    validations:
+      required: true
+  - type: textarea
+    id: verification
+    attributes:
+      label: Verification
+      value: |
+        - `npm run verify`
+        - `npm run build:web && npm run test:e2e` (if screens or navigation change)
+    validations:
+      required: true
+  - type: textarea
+    id: human
+    attributes:
+      label: Human steps (pairing)
+      description: Console setup, secrets, devices or approvals. Leave empty for agent-ready work.
+  - type: textarea
+    id: depends
+    attributes:
+      label: Depends on
+      description: Issues that must be merged first. Also add them under "Relationships → Blocked by".
+      placeholder: '- #3'
+  - type: dropdown
+    id: readiness
+    attributes:
+      label: Readiness
+      options:
+        - agent-ready (fully specified, no human steps)
+        - pairing (needs a human)
+        - needs-decision (open question first)
+    validations:
+      required: true
