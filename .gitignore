@@ -50,3 +50,7 @@ GoogleService-Info.plist
 
 # Vercel
 .vercel
+
+# Playwright
+/test-results/
+/playwright-report/

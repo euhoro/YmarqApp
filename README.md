@@ -17,9 +17,12 @@ npm run ios                  # iOS Simulator (needs Xcode)
 ## Checks
 
 ```bash
-npm run verify   # lint + typecheck + format check + tests (what CI runs)
-npm run format   # auto-fix formatting
+npm run verify     # lint + typecheck + format check + unit/integration tests (Jest)
+npm run format     # auto-fix formatting
+npm run build:web && npm run test:e2e   # browser smoke tests (Playwright; first run: npx playwright install chromium)
 ```
+
+CI (`.github/workflows/ci.yml`) runs both on every pull request and on `master`.
 
 ## Data source
 
