@@ -41,7 +41,7 @@ Every behaviour found in the code, and what it becomes.
 |---|---|---|---|---|
 | F0 | **Build & project setup**: Gradle 2.1 / AGP 0.13 / jcenter | `build.gradle`, `app/build.gradle` | Expo app (TypeScript strict), Expo Router, ESLint + Prettier + `tsc`, Jest. Legacy Android sources removed. | ⬜ |
 | F1 | **App shell**: single Activity, "Ymarq" label, launcher icon, Holo/Material theme | `MainActivity`, `styles.xml`, `drawable-*` | Expo Router root layout, React Native Paper (Material 3) theme with light/dark mode, app icon + splash rebuilt from `ic_launcher-web.png` / `ym_logo.jpg` | ⬜ |
-| F2 | **Product feed**: on screen open, GET products for a hardcoded user code `1111111111` and show `"Description - Hashtag"` text rows | `FetchProductsTask`, `getProductDataFromJson` | `feed` route: a `FlatList` of product cards with image, description and hashtag, plus loading/empty/error states ← `useProducts()` (TanStack Query) ← `ProductRepository` interface (fake now, then Firestore; the legacy API later if its sources are found). The signed-in user replaces the hardcoded code. | ⛔ D-B |
+| F2 | **Product feed**: on screen open, GET products for a hardcoded user code `1111111111` and show `"Description - Hashtag"` text rows | `FetchProductsTask`, `getProductDataFromJson` | `feed` route: a `FlatList` of product cards with image, description and hashtag, plus loading/empty/error states ← `useProducts()` (TanStack Query) ← `ProductRepository` interface (fake now, then Firestore; the legacy API later if its sources are found). The signed-in user replaces the hardcoded code. | ⬜ |
 | F3 | **Refresh**: overflow-menu "Refresh" re-fetches, but with a *different* hardcoded code `1222222222` (bug) | `onOptionsItemSelected` | Pull-to-refresh (`RefreshControl`) plus a header action, using the same user as F2 | ⬜ |
 | F4 | **Take a photo**: overflow "Camera" launches the system camera and writes to public `Pictures/picFolder/N.jpg` via a `file://` URI. The counter resets on every launch (so photos get overwritten). The result is ignored and nothing is uploaded. | `TakePicture`, `onActivityResult` | `expo-image-picker` `launchCameraAsync` (system camera on Android/iOS, file/camera input on web) with a runtime permission flow. Photos are kept in app storage. Later it feeds the F9 "create listing" flow. | ⬜ |
 | F5 | **Identity detection**: scans `AccountManager` accounts for an email-shaped name and toasts "Loging in as …". Dead code that would read the phone number through `TelephonyManager`. | `onCreateView` | Removed: modern Android hides accounts, and phone-number access is restricted. Replaced by real sign-in (F6). | 🗑️ |
@@ -78,7 +78,7 @@ Every behaviour found in the code, and what it becomes.
 | Quality gates | `eslint`, `prettier --check`, `tsc --noEmit`, `jest` | The same commands run locally and in CI |
 | Native builds / CD | **EAS Build** (cloud builds, managed signing keys), **EAS Update** (per-PR preview updates), **EAS Submit** (Play/App Store) | No local Java/Xcode needed, and keys are backed up |
 | Web hosting | **Vercel** (static `expo export -p web`), preview URL per PR | Every parallel PR gets a clickable preview |
-| Identifiers | Android package / iOS bundle id: `com.ymarq.app` (D-C) | The legacy key is probably lost, so a new id is needed |
+| Identifiers | Android package / iOS bundle id: `com.ymarq.app` | The legacy key is probably lost, so a new id is needed |
 
 ### Repository layout (created by the scaffold)
 ```
@@ -96,8 +96,8 @@ docs/REVIVAL_2026.md   # this file
 ## 4. Phased plan
 
 ### Phase 0: Decisions
-- [x] Q1–Q5, D-A resolved (see Decisions log)
-- [ ] Resolve D-B, D-C, D-D
+- [x] Q1–Q5, D-A…D-D resolved (see Decisions log)
+- [x] Resolve D-B, D-C, D-D
 
 ### Phase 1: Foundation
 - [ ] F0: Expo scaffold, tooling, route stubs, service interfaces + fakes, remove legacy Android
@@ -130,14 +130,12 @@ docs/REVIVAL_2026.md   # this file
 | 2026-09-30 | Q4: The app was published and later pulled. The signing key may be lost, so we plan for a new applicationId. | owner |
 | 2026-09-30 | D-A: **Firebase** for auth and interim data. The owner created the Firebase project. | owner |
 | 2026-09-30 | Q5 (revised): **React Native + Expo + TypeScript** instead of Kotlin Multiplatform. Targets: Android first, then iOS and Web from the same codebase. Vercel hosts the web build. | owner |
+| 2026-09-30 | D-B: Feed reads **Firestore** sample data for now, behind a **switch** (`EXPO_PUBLIC_DATA_SOURCE` = `fake` \| `firestore` \| `legacy`). Firestore documents use the **exact legacy data model** (`Description`, `Hashtag`, `Id`, `Image`, `PublisherId`), so the legacy backend can be plugged in as a third `ProductRepository` without touching the UI. | owner |
+| 2026-09-30 | D-C: App id `com.ymarq.app` (Android package + iOS bundle). | owner |
+| 2026-09-30 | D-D: Claude Code GitHub Action is the agent runner, but **no paid API key yet** (cost control). Agents stay off until costs are reviewed (see §7). | owner |
+| 2026-09-30 | Firebase project id `ymarq-35862` (Android, iOS and Web apps registered). Expo account `ymarq`. Vercel account connected. **Firebase Hosting not used**, since Vercel hosts the web app. | owner |
+| 2026-09-30 | Test targets: **Web first, then iOS** (Simulator, then a real iPhone). Android device testing waits until an Android phone is available; Android stays the release priority. | owner |
 | 2026-09-30 | Work is managed as GitHub Issues. "Agent-ready" issues are picked up by agents that open PRs; "pairing" issues are done together. | owner |
-
-### Still open
-| # | Question | Proposal |
-|---|---|---|
-| **D-B** | Where the ported feed reads data from until the legacy sources are found | Firestore seeded with sample products (a real end-to-end demo), with a fake repository for tests |
-| **D-C** | New app id | `com.ymarq.app` for Android and iOS |
-| **D-D** | Agent runner | Claude Code GitHub Action, triggered by the `agent-ready` label |
 
 ---
 
@@ -175,8 +173,23 @@ docs/REVIVAL_2026.md   # this file
 | 1 | F7: Settings screen (version, theme toggle, sign-out via `AuthService`) | agent-ready | scaffold |
 | 1 | F4: photo capture with `expo-image-picker` + permission flow + tests | agent-ready | scaffold |
 | 2 | F3: pull-to-refresh | agent-ready | F2a, F2b |
-| 2 | F2c: Firestore `ProductRepository` (native + web), security rules, seed script | pairing | F2a, D-B |
-| 2 | F6: phone OTP sign-in + auth gate (dev build on a real phone) | pairing | scaffold, Firebase |
+| 2 | F2c: Firestore `ProductRepository` (native + web, legacy field names), security rules, seed script | pairing | F2a |
+| 2 | F6: phone OTP sign-in + auth gate (web first: invisible reCAPTCHA; then iOS Simulator) | pairing | scaffold |
 | 2 | F6b: Google sign-in | pairing | F6 |
 | 2 | CD: EAS Build on merge (Android), EAS Update preview per PR, Vercel deploy | pairing | CI, accounts |
 | 3 | Release: Play listing + internal track, iOS TestFlight, web domain + privacy policy | pairing | all above |
+
+---
+
+## 7. Later: costs and accounts (don't forget)
+
+| Item | Cost | Needed for | Status |
+|---|---|---|---|
+| Agent runner auth: either a `CLAUDE_CODE_OAUTH_TOKEN` from the existing Claude subscription (`claude setup-token`; uses subscription limits, no extra bill) **or** an `ANTHROPIC_API_KEY` (pay per use) | $0 extra / usage-based | Agents picking up `agent-ready` issues automatically | ⏸️ deferred by owner |
+| Claude GitHub App on the repo | Free | Agents (and Claude Code on the web) pushing branches and opening PRs | ⬜ check |
+| Firebase **Blaze** plan (+ budget alert) | Pay-as-you-go; small at our scale | Real SMS for phone login (test numbers work without it), Cloud Storage for photos (F9) | ⏸️ |
+| Apple Developer Program | $99 / year | Installing on a real iPhone via EAS, TestFlight, App Store | ⏸️ |
+| Xcode (Mac App Store) | Free | iOS Simulator for native testing | ⬜ |
+| Google Play developer account (reuse the old one if access exists) | $25 one-time (or $0 if reused) | Publishing the Android app | ⏸️ |
+| Android test phone | Device | Real-device testing of the Android build | ⏸️ |
+| Custom domain for the web app | ~$10–20 / year | Production web URL (optional; `*.vercel.app` is fine until launch) | ⏸️ |
