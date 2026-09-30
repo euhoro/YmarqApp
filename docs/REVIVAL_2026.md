@@ -132,12 +132,12 @@ Every behaviour found in the code, and what it becomes.
 | 2026-09-30 | Q3: Port the prototype 1:1 first; the full vision (F9/F10) comes later. CI/CD is a bonus so parallel issues can be verified. | owner |
 | 2026-09-30 | Q4: The app was published and later pulled. The signing key may be lost, so we plan for a new applicationId. | owner |
 | 2026-09-30 | Q5: Kotlin Multiplatform from day one, Android first. | owner |
+| 2026-09-30 | D-A: **Firebase** chosen; the owner created the Firebase project. | owner |
 | 2026-09-30 | Work is managed as GitHub Issues. "Agent-ready" issues are picked up by agents that open PRs; "pairing" issues are done together. | owner |
 
 ### Still open (round 2)
 | # | Question | Proposal |
 |---|---|---|
-| **D-A** | Auth + interim backend provider | **Firebase**: Auth (phone OTP with no SMS permission, plus Google), Firestore/Storage as the interim data store, App Distribution for CD |
 | **D-B** | Where the ported feed reads data from until the legacy sources are found | Firestore seeded with sample products (a real end-to-end demo), with a fake repository for tests |
 | **D-C** | New applicationId | `com.ymarq.app` (only set when first uploading to Play; easy to change before then) |
 | **D-D** | Agent runner | Claude Code GitHub Action, triggered by the `agent-ready` label |
