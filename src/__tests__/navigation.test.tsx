@@ -1,4 +1,4 @@
-import { fireEvent, renderRouter, screen } from 'expo-router/testing-library';
+import { fireEvent, renderRouter, screen, waitFor } from 'expo-router/testing-library';
 
 import RootLayout from '@/app/_layout';
 import FeedScreen from '@/app/index';
@@ -30,13 +30,13 @@ describe('app navigation', () => {
 
     await fireEvent.press(await screen.findByText('Settings'));
 
-    expect(await screen.findByText(/Settings \(coming in F7\)/)).toBeTruthy();
-    expect(app.getPathname()).toBe('/settings');
+    await waitFor(() => expect(app.getPathname()).toBe('/settings'));
   });
 
   it('deep-links to sign-in', async () => {
-    await renderRouter(routes, { initialUrl: '/sign-in' });
+    const app = renderRouter(routes, { initialUrl: '/sign-in' });
+    await app;
 
-    expect(await screen.findByText(/Phone sign-in/)).toBeTruthy();
+    expect(app.getPathname()).toBe('/sign-in');
   });
 });

@@ -40,13 +40,13 @@ Every behaviour found in the code, and what it becomes.
 | # | Feature (legacy behaviour) | Legacy location | New implementation (Expo/TS) | Status |
 |---|---|---|---|---|
 | F0 | **Build & project setup**: Gradle 2.1 / AGP 0.13 / jcenter | `build.gradle`, `app/build.gradle` | Expo app (TypeScript strict), Expo Router, ESLint + Prettier + `tsc`, Jest. Legacy Android sources removed. | ✅ scaffold |
-| F1 | **App shell**: single Activity, "Ymarq" label, launcher icon, Holo/Material theme | `MainActivity`, `styles.xml`, `drawable-*` | Expo Router root layout, React Native Paper (Material 3) theme with light/dark mode, app icon + splash rebuilt from `ic_launcher-web.png` / `ym_logo.jpg` | ⬜ |
-| F2 | **Product feed**: on screen open, GET products for a hardcoded user code `1111111111` and show `"Description - Hashtag"` text rows | `FetchProductsTask`, `getProductDataFromJson` | `feed` route: a `FlatList` of product cards with image, description and hashtag, plus loading/empty/error states ← `useProducts()` (TanStack Query) ← `ProductRepository` interface (fake now, then Firestore; the legacy API later if its sources are found). The signed-in user replaces the hardcoded code. | ⬜ |
-| F3 | **Refresh**: overflow-menu "Refresh" re-fetches, but with a *different* hardcoded code `1222222222` (bug) | `onOptionsItemSelected` | Pull-to-refresh (`RefreshControl`) plus a header action, using the same user as F2 | ⬜ |
-| F4 | **Take a photo**: overflow "Camera" launches the system camera and writes to public `Pictures/picFolder/N.jpg` via a `file://` URI. The counter resets on every launch (so photos get overwritten). The result is ignored and nothing is uploaded. | `TakePicture`, `onActivityResult` | `expo-image-picker` `launchCameraAsync` (system camera on Android/iOS, file/camera input on web) with a runtime permission flow. Photos are kept in app storage. Later it feeds the F9 "create listing" flow. | ⬜ |
+| F1 (#7) | **App shell**: single Activity, "Ymarq" label, launcher icon, Holo/Material theme | `MainActivity`, `styles.xml`, `drawable-*` | Expo Router root layout, React Native Paper (Material 3) theme with light/dark mode, app icon + splash rebuilt from `ic_launcher-web.png` / `ym_logo.jpg` | ⬜ |
+| F2 (#3, #4, #9) | **Product feed**: on screen open, GET products for a hardcoded user code `1111111111` and show `"Description - Hashtag"` text rows | `FetchProductsTask`, `getProductDataFromJson` | `feed` route: a `FlatList` of product cards with image, description and hashtag, plus loading/empty/error states ← `useProducts()` (TanStack Query) ← `ProductRepository` interface (fake now, then Firestore; the legacy API later if its sources are found). The signed-in user replaces the hardcoded code. | ⬜ |
+| F3 (#8) | **Refresh**: overflow-menu "Refresh" re-fetches, but with a *different* hardcoded code `1222222222` (bug) | `onOptionsItemSelected` | Pull-to-refresh (`RefreshControl`) plus a header action, using the same user as F2 | ⬜ |
+| F4 (#5) | **Take a photo**: overflow "Camera" launches the system camera and writes to public `Pictures/picFolder/N.jpg` via a `file://` URI. The counter resets on every launch (so photos get overwritten). The result is ignored and nothing is uploaded. | `TakePicture`, `onActivityResult` | `expo-image-picker` `launchCameraAsync` (system camera on Android/iOS, file/camera input on web) with a runtime permission flow. Photos are kept in app storage. Later it feeds the F9 "create listing" flow. | ⬜ |
 | F5 | **Identity detection**: scans `AccountManager` accounts for an email-shaped name and toasts "Loging in as …". Dead code that would read the phone number through `TelephonyManager`. | `onCreateView` | Removed: modern Android hides accounts, and phone-number access is restricted. Replaced by real sign-in (F6). | 🗑️ |
-| F6 | **Logon**: POSTs the hardcoded form `Id=1091&Email=someval1091@gmail.com` to Azure `/home/Logon`, ignores the response, and always toasts "Logged in". | `LogonTask`, `requestUrl` | Firebase Auth: **phone OTP first** (no SMS permission needed), Google second. A sign-in route gates the app, and the session persists across restarts. | ⬜ |
-| F7 | **Settings** menu item (no-op) | `menu_main.xml` | `settings` route: account/sign-out, theme, app version. Kept minimal. | ⬜ |
+| F6 (#10) | **Logon**: POSTs the hardcoded form `Id=1091&Email=someval1091@gmail.com` to Azure `/home/Logon`, ignores the response, and always toasts "Logged in". | `LogonTask`, `requestUrl` | Firebase Auth: **phone OTP first** (no SMS permission needed), Google second. A sign-in route gates the app, and the session persists across restarts. | ⬜ |
+| F7 (#6) | **Settings** menu item (no-op) | `menu_main.xml` | `settings` route: account/sign-out, theme, app version. Kept minimal. | ⬜ |
 | F8 | **Data models**: `Product(Description, Hashtag, Id, Image, PublisherId)`, `User(Id, Email)` | `DataProduct`, `DataUser` | TypeScript types + `zod` schemas that parse the legacy PascalCase JSON into camelCase domain objects (`src/domain/`) | ✅ scaffold |
 | F9 | *README-only, not implemented:* **manage classifieds** (create/edit/delete a listing with photo + description + hashtag) | README | New create-listing flow: F4 photo → form → upload to Firebase Storage | ⏸️ later (Q3) |
 | F10 | *README-only, not implemented:* **communication between friends** (friends graph, sharing, messaging) | README | Phone-number contact linking (WhatsApp-style, `expo-contacts`), then messaging | ⏸️ later (Q3) |
@@ -102,7 +102,8 @@ docs/REVIVAL_2026.md   # this file
 ### Phase 1: Foundation
 - [x] F0: Expo scaffold (SDK 57), tooling, route stubs, service interfaces + fakes, data-source switch, legacy API repository, remove legacy Android
 - [x] CI: GitHub Actions: lint, typecheck, format, Jest unit + router integration tests, expo-doctor, web build + Playwright smoke tests
-- [ ] Agent workflow, issue templates, labels, Project board
+- [x] Issue templates, labels, issues #3–#21, pinned Roadmap epic #22 with dependency graph, developer guide
+- [ ] Agent automation (deferred, #16)
 - [ ] Accounts and secrets (Firebase apps, Expo, Vercel)
 
 ### Phase 2: Port existing features (1:1 behaviour, done properly)
@@ -150,9 +151,9 @@ docs/REVIVAL_2026.md   # this file
    - `blocked`: waiting on a dependency; the label is removed when the dependency merges.
    - `needs-decision`: open question; never picked up by an agent.
    - Area labels: `area:app`, `area:ui`, `area:data`, `area:auth`, `area:ci`.
-3. **Run:** the agent workflow (`.github/workflows/agent.yml`, Claude Code GitHub Action) starts on `agent-ready`, works on an `agent/issue-<n>` branch, runs `npm run verify` (lint + typecheck + test), and opens a PR with `Closes #<n>`.
+3. **Run:** *(automation deferred, see #16)* the agent workflow (`.github/workflows/agent.yml`, Claude Code GitHub Action) will start on `agent-ready`, works on an `agent/issue-<n>` branch, runs `npm run verify` (lint + typecheck + test), and opens a PR with `Closes #<n>`.
 4. **Gate:** CI must be green, and the PR gets a Vercel web preview. A human reviews and merges. Review comments on the PR (`@claude …`) send the agent back for fixes.
-5. **Track:** a GitHub Project board (Todo / Agent running / In review / Done), one milestone per wave. This file mirrors the status of each feature.
+5. **Track:** the pinned Roadmap epic (#22) with sub-issues, native *Blocked by* links and a dependency graph. Closed issues get a `## Summary` comment. This file mirrors the status of each feature and holds the decisions log.
 
 ### Rules that make parallel work safe
 - **Wave 0 is serial.** The scaffold installs *every* dependency and creates route stubs, service interfaces and fakes, so parallel PRs don't collide on `package.json` or shared files.
@@ -160,24 +161,102 @@ docs/REVIVAL_2026.md   # this file
 - Issues communicate through interfaces that already exist on `master` (e.g., the feed UI uses the `useProducts()` contract; the data issue implements `ProductRepository`).
 - No agent-ready issue touches secrets, the Firebase/Expo/Vercel consoles, signing, or the stores.
 
-### Issue breakdown
-| Wave | Issue | Type | Depends on |
+### Issues and dependency graph
+
+The pinned [Roadmap epic #22](https://github.com/euhoro/YmarqApp/issues/22) is the live view: every issue is its sub-issue, and dependencies use GitHub's native *Blocked by* links. Arrow = "must be done before"; green = agent-ready, blue = pairing, grey = deferred.
+
+```mermaid
+flowchart LR
+  nF2a["#3 F2a<br/>useProducts() data hook"]
+  nF2b["#4 F2b<br/>Product list UI components"]
+  nF4["#5 F4<br/>Take a photo with the camera"]
+  nF7["#6 F7<br/>Settings screen"]
+  nF1["#7 F1<br/>Brand: app icon, splash and theme"]
+  nF3["#8 F3<br/>Feed screen: real data, refresh, camera button"]
+  nF2c["#9 F2c<br/>Firestore product repository"]
+  nF6["#10 F6<br/>Phone number sign-in (web)"]
+  nCD_WEB["#11 CD-WEB<br/>Web deploys on Vercel (PR previews + production)"]
+  nCD_EAS["#12 CD-EAS<br/>Native builds with EAS (iOS Simulator + Android)"]
+  nF6b["#13 F6b<br/>Phone sign-in on iOS and Android (native)"]
+  nF6c["#14 F6c<br/>Google sign-in"]
+  nLEGACY["#15 LEGACY<br/>Plug in the legacy backend"]
+  nAGENTS["#16 AGENTS<br/>Enable agent automation (Claude Code GitHub Action)"]
+  nREL_WEB["#17 REL-WEB<br/>web production"]
+  nREL_IOS["#18 REL-IOS<br/>iOS (TestFlight → App Store)"]
+  nREL_AND["#19 REL-AND<br/>Android (Play internal track → production)"]
+  nF9["#20 F9<br/>Create, edit and delete listings"]
+  nF10["#21 F10<br/>Contacts linking and messaging"]
+  nF2a --> nF3
+  nF2b --> nF3
+  nF4 --> nF3
+  nF2c --> nF6
+  nF3 --> nF6
+  nF6 --> nF6b
+  nCD_EAS --> nF6b
+  nF6 --> nF6c
+  nF1 --> nREL_WEB
+  nF3 --> nREL_WEB
+  nF6 --> nREL_WEB
+  nCD_WEB --> nREL_WEB
+  nF6b --> nREL_IOS
+  nREL_WEB --> nREL_IOS
+  nF4 --> nREL_IOS
+  nF7 --> nREL_IOS
+  nF6b --> nREL_AND
+  nREL_WEB --> nREL_AND
+  nF4 --> nREL_AND
+  nF7 --> nREL_AND
+  nF4 --> nF9
+  nF2c --> nF9
+  nF6 --> nF9
+  nF6b --> nF10
+  nF9 --> nF10
+  classDef ready fill:#dff5e3,stroke:#0e8a16,color:#000
+  classDef pairing fill:#dbe9fb,stroke:#1d76db,color:#000
+  classDef later fill:#eeeeee,stroke:#999,color:#555
+  class nF2a ready
+  class nF2b ready
+  class nF4 ready
+  class nF7 ready
+  class nF1 pairing
+  class nF3 ready
+  class nF2c pairing
+  class nF6 pairing
+  class nCD_WEB pairing
+  class nCD_EAS pairing
+  class nF6b pairing
+  class nF6c later
+  class nLEGACY pairing
+  class nAGENTS later
+  class nREL_WEB later
+  class nREL_IOS later
+  class nREL_AND later
+  class nF9 later
+  class nF10 later
+```
+
+| Wave | Issue | Type | Blocked by |
 |---|---|---|---|
-| 0 | ✅ F0 scaffold: Expo + TS + Router + Paper + Query + zod + Firebase JS SDK, lint/test config, `npm run verify`, route stubs, `ProductRepository`/`AuthService` interfaces + fakes, data-source switch, remove legacy Android | pairing | – |
-| 0 | ✅ CI: GitHub Actions (`verify` + `e2e-web` jobs) on PRs and `master` | agent-ready | scaffold |
-| 0 | Agent workflow + issue templates + labels + Project board | pairing | – |
-| 0 | Register Firebase iOS + Web apps ✅; Expo account `ymarq` ✅; Vercel ✅; `EXPO_TOKEN` secret; agent auth (deferred, §7) | pairing (human only) | – |
-| 1 | F2a: `useProducts()` hook over `ProductRepository` + fake data + tests | agent-ready | scaffold |
-| 1 | F2b: Feed UI (cards, loading/empty/error) + component tests | agent-ready | scaffold |
-| 1 | F1: theme (light/dark), icon + splash from `ym_logo` | agent-ready | scaffold |
-| 1 | F7: Settings screen (version, theme toggle, sign-out via `AuthService`) | agent-ready | scaffold |
-| 1 | F4: photo capture with `expo-image-picker` + permission flow + tests | agent-ready | scaffold |
-| 2 | F3: pull-to-refresh | agent-ready | F2a, F2b |
-| 2 | F2c: Firestore `ProductRepository` (native + web, legacy field names), security rules, seed script | pairing | F2a |
-| 2 | F6: phone OTP sign-in + auth gate (web first: invisible reCAPTCHA; then iOS Simulator) | pairing | scaffold |
-| 2 | F6b: Google sign-in | pairing | F6 |
-| 2 | CD: EAS Build on merge (Android), EAS Update preview per PR, Vercel deploy | pairing | CI, accounts |
-| 3 | Release: Play listing + internal track, iOS TestFlight, web domain + privacy policy | pairing | all above |
+| 0 | ✅ #1 Expo scaffold · ✅ #2 CI | – | – |
+| 1 | #3 F2a: useProducts() data hook | agent-ready | – |
+| 1 | #4 F2b: Product list UI components | agent-ready | – |
+| 1 | #5 F4: Take a photo with the camera | agent-ready | – |
+| 1 | #6 F7: Settings screen | agent-ready | – |
+| 1 | #7 F1: Brand: app icon, splash and theme | pairing | – |
+| 2 | #8 F3: Feed screen: real data, refresh, camera button | agent-ready | #3, #4, #5 |
+| 2 | #9 F2c: Firestore product repository | pairing | – |
+| 2 | #10 F6: Phone number sign-in (web) | pairing | #9, #8 |
+| 2 | #11 CD: Web deploys on Vercel (PR previews + production) | pairing | – |
+| 2 | #12 CD: Native builds with EAS (iOS Simulator + Android) | pairing | – |
+| 3 | #13 F6b: Phone sign-in on iOS and Android (native) | pairing | #10, #12 |
+| 3 | #14 F6c: Google sign-in | pairing | #10 |
+| 3 | #15 Plug in the legacy backend | pairing | – |
+| 3 | #16 Enable agent automation (Claude Code GitHub Action) | pairing | – |
+| 4 | #17 Release: web production | pairing | #7, #8, #10, #11 |
+| 4 | #18 Release: iOS (TestFlight → App Store) | pairing | #13, #17, #5, #6 |
+| 4 | #19 Release: Android (Play internal track → production) | pairing | #13, #17, #5, #6 |
+| later | #20 F9: Create, edit and delete listings | needs-decision | #5, #9, #10 |
+| later | #21 F10: Contacts linking and messaging | needs-decision | #13, #20 |
 
 ---
 

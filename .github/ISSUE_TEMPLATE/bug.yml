@@ -1,0 +1,35 @@
+name: Bug
+description: Something doesn't work as expected.
+labels: [bug]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened, and what did you expect?
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Run `npm run web`
+        2. ...
+    validations:
+      required: true
+  - type: dropdown
+    id: platform
+    attributes:
+      label: Platform
+      multiple: true
+      options: [Web, iOS Simulator, iPhone, Android emulator, Android phone]
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Commit or preview URL
+  - type: textarea
+    id: extra
+    attributes:
+      label: Screenshots or logs
