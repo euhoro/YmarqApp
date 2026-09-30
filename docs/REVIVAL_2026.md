@@ -239,7 +239,7 @@ flowchart LR
 |---|---|---|---|
 | 0 | ✅ #1 Expo scaffold · ✅ #2 CI | – | – |
 | 1 | #3 F2a: useProducts() data hook | agent-ready | – |
-| 1 | ✅ #4 F2b: Product list UI components | agent-ready | – |
+| 1 | #4 F2b: Product list UI components | agent-ready | – |
 | 1 | #5 F4: Take a photo with the camera | agent-ready | – |
 | 1 | #6 F7: Settings screen | agent-ready | – |
 | 1 | #7 F1: Brand: app icon, splash and theme | pairing | – |
