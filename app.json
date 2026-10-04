@@ -36,7 +36,8 @@
           "cameraPermission": "Ymarq uses the camera so you can photograph items you want to list."
         }
       ],
-      "expo-font"
+      "expo-font",
+      "expo-asset"
     ],
     "experiments": {
       "typedRoutes": true
