@@ -10,6 +10,24 @@
 
 ---
 
+## 0. Definition of Done (launch)
+
+**We launch when two or more real users can, on the production app, against the real server:**
+
+| # | Users can… | Built by |
+|---|---|---|
+| 0 | **Register** with their phone number and choose a name | #37 sign-in screen, #42 name, #10 Firebase (web), #13 Firebase (phones), #48 API profiles |
+| 1 | **Log in** (and stay logged in) | #37, #10, #13 |
+| 2 | **Sell:** post a photo with a description, super intuitively; price, category and location are suggested from the text | #5 camera ✅, #38 sell flow, #35 photo upload, #34 API products |
+| 3 | **Buy:** find other users' items with basic search (substring, like `%text%`) and see the details | #44 search, #43 details, #34 API search |
+| 4 | **Chat** with each other about an item | #45 chat UI, #49 API chat |
+| 5 | **Get notifications** for new messages and for new items matching a saved search | #46 saved searches, #47 push on phones, #50 matching, #51 API push |
+| 6 | Do all of it as a **real client of the server**: no mocks in production | #30–#36, #53 |
+
+Final check: **#54**, an acceptance test with two real users that ticks every row. Issues needed for launch carry the **`dod`** label; work on anything else only when it unblocks a `dod` issue.
+
+---
+
 ## 1. What exists today (audit)
 
 The whole app is 4 Java classes (~600 lines) and was built from the Udacity
@@ -147,6 +165,9 @@ docs/REVIVAL_2026.md   # this file
 | 2026-10-05 | Keep the **fake data source** until the API exists. AWS deferred. Stack kept lean: **option A**, a TypeScript API on Vercel Functions + Neon Postgres + Vercel Blob + Firebase phone sign-in (see `docs/STACK.md`). Vercel Pro ($20/month) at commercial launch. | owner |
 | 2026-10-05 | API framework: **Hono** (API-only, runs natively on Vercel), in `api/` in this repo. Not Next.js: the Expo app already is the website. | owner |
 | 2026-10-05 | Order: **UI first on mock data** (fake repositories), then build the new API (the legacy server had no real logic to port). | owner |
+| 2026-10-05 | **Definition of Done for launch** agreed (section 0): register, log in, sell, buy/search, chat, notifications, all against the real server. Issues on that path carry the `dod` label; #54 is the final acceptance test. | owner |
+| 2026-10-05 | Listings get **price, currency, category, location** (optional; legacy wire format extended with `Price`, `Currency`, `Category`, `Location`). Pre-filled by **basic rule-based extraction** from the free-text description; a smarter extraction service later (#52). | owner |
+| 2026-10-05 | Messaging moved into the launch scope (#45, #49); contacts linking (#21) is after launch. Owner tasks get the `owner-task` label and are assigned to the owner. | owner |
 | 2026-10-05 | Tracker statuses are updated once per wave (not in feature PRs) to avoid merge conflicts between parallel PRs. | Claude |
 | 2026-10-05 | Web production: https://ymarq-app.vercel.app (Vercel, deploys `master`). `master` protected by ruleset "master-safe" (PR + both CI checks + up to date). | owner |
 
@@ -176,17 +197,18 @@ docs/REVIVAL_2026.md   # this file
 
 The live view is the pinned [Roadmap epic #22](https://github.com/euhoro/YmarqApp/issues/22): every issue is its sub-issue, dependencies use GitHub's native *Blocked by* links, and the dependency graph plus "ready now / blocked / done" lists are **generated from GitHub** by `npm run roadmap -- --write` (`scripts/roadmap.mjs`). Run it after adding issues or changing dependencies.
 
-Issue groups (2026-10-05):
+Issue groups (2026-10-05). ⭐ = on the Definition of Done path (`dod` label), 👤 = owner task:
 
 | Group | Issues |
 |---|---|
-| Done | #3 #4 #5 #6 (Wave 1), #15 (legacy server reviewed); #9 Firestore replaced |
-| UI on mock data (now) | #8 feed wiring (PR #29), #37 sign-in screen + auth gate, #38 create listing, #7 brand |
-| Backend: Hono API | #30 skeleton → #32 Postgres store, #33 token check → #34 products endpoints → #36 app connects; #31 provisioning, #35 photo uploads |
-| Sign-in, real | #10 Firebase on web → #13 native, #14 Google |
-| Delivery | #11 Vercel, #12 EAS builds, #16 agents |
-| Release | #17 web, #18 iOS, #19 Android |
-| Later | #20 edit/delete listings, #21 contacts + messaging |
+| Done | #3 #4 #5 #6 #8 (feed), #11 (Vercel), #15 (legacy server reviewed); #9 Firestore replaced |
+| UI on mock data (now) | ⭐ #37 sign-in → ⭐ #42 name; ⭐ #38 sell → ⭐ #43 details + ⭐ #44 search → ⭐ #45 chat, ⭐ #46 saved searches; #7 brand |
+| Backend: Hono API | ⭐ #30 skeleton → ⭐ #32 Postgres, ⭐ #33 tokens → ⭐ #34 products + search, ⭐ #48 profiles, ⭐ #49 chat → ⭐ #50 matching → ⭐ #51 push; ⭐ #35 photos; ⭐ #36 app connects |
+| Sign-in, real | ⭐ #10 Firebase web → ⭐ #13 phones; #14 Google |
+| Phones and notifications | ⭐ #12 EAS builds → ⭐ #47 push on phones |
+| Launch | ⭐ #53 no mocks in production → ⭐ #17 web release → ⭐👤 #54 acceptance test; #18 iOS, #19 Android stores |
+| Owner tasks 👤 | ⭐ #31 Vercel API project + Neon + Blob, ⭐ #39 Firebase Blaze + budget, ⭐ #40 Xcode + Expo login, #41 launch accounts |
+| Later | #14 Google sign-in, #16 agents, #20 edit/delete, #21 contacts linking, #52 extraction service |
 
 ---
 
