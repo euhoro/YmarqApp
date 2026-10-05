@@ -71,7 +71,8 @@ Every behaviour found in the code, and what it becomes.
 | UI kit | React Native Paper (Material 3) | Material look on Android, works on web, has a theming system |
 | Server state | TanStack Query | Caching, loading/error states and refresh for free |
 | Validation | zod | Parses untrusted API/Firestore data into typed objects |
-| Auth + data | Firebase: Auth (phone + Google), Firestore, Storage. Native: `@react-native-firebase/*`; web: Firebase JS SDK. Both sit behind `src/services/*` interfaces with `.web.ts` variants. | The native SDKs are needed for phone auth on Android/iOS |
+| Auth | Firebase Auth (phone, later Google). Native: `@react-native-firebase/*`; web: Firebase JS SDK; behind `AuthService`. | The native SDKs are needed for phone auth on Android/iOS |
+| Data + API | Ymarq API (TypeScript, Vercel Functions) + Postgres (Neon) + Vercel Blob, behind repositories. Proposed, see `docs/STACK.md` | One language, two vendors |
 | Camera | `expo-image-picker` (in-app viewfinder via `expo-camera` only if needed later) | Least code and works on all three platforms |
 | Images | `expo-image` | Caching, fast image display |
 | Tests | Jest (`jest-expo`) + React Native Testing Library; Maestro E2E later | Unit/component tests run in CI without a device |
@@ -140,6 +141,10 @@ docs/REVIVAL_2026.md   # this file
 | 2026-09-30 | Test targets: **Web first, then iOS** (Simulator, then a real iPhone). Android device testing waits until an Android phone is available; Android stays the release priority. | owner |
 | 2026-09-30 | Work is managed as GitHub Issues. "Agent-ready" issues are picked up by agents that open PRs; "pairing" issues are done together. | owner |
 | 2026-10-05 | Compared `YmarqOrg/YmarqApp` with this repo's legacy code: same root commit `6f517d8`, plus two trivial commits (camera menu label "Camera" → "Camera3", IDE files). **No newer version exists; the plan stands.** That repo contains only the Android client; the backend sources (#15) are still missing. | owner + Claude |
+| 2026-10-05 | Backend sources found (`YmarqOrg/YMarqServ`, .NET WCF, 2014): the Ymarq endpoints were mocks (hardcoded "Suzuki Swift" for user `1111111111`); the rest is a 2012 photo-upload sample whose database holds only Windows sample images. **Nothing to migrate**; the API shape is already in the app's data model. #15 closed. | owner + Claude |
+| 2026-10-05 | D-A revised: **Firebase for phone sign-in only**. Firestore and Firebase Hosting dropped. | owner |
+| 2026-10-05 | Database: **Postgres**, behind a repository interface in the API so DynamoDB stays possible. | owner |
+| 2026-10-05 | Keep the **fake data source** until the API exists. AWS deferred. Stack kept lean: proposed **TypeScript API on Vercel Functions + Neon Postgres + Vercel Blob** (see `docs/STACK.md`), awaiting confirmation. | owner + Claude |
 | 2026-10-05 | Tracker statuses are updated once per wave (not in feature PRs) to avoid merge conflicts between parallel PRs. | Claude |
 | 2026-10-05 | Web production: https://ymarq-app.vercel.app (Vercel, deploys `master`). `master` protected by ruleset "master-safe" (PR + both CI checks + up to date). | owner |
 
