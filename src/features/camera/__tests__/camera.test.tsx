@@ -1,9 +1,9 @@
 import * as ImagePicker from 'expo-image-picker';
 import { fireEvent, renderRouter, screen, waitFor } from 'expo-router/testing-library';
 import { View } from 'react-native';
-import { PaperProvider } from 'react-native-paper';
 
 import NewListingScreen from '@/app/(app)/new-listing';
+import { AppProviders } from '@/providers/AppProviders';
 
 import { TakePhotoFab } from '../TakePhotoFab';
 
@@ -27,7 +27,7 @@ function Feed() {
 function renderApp(initialUrl = '/') {
   return renderRouter(
     { index: Feed, 'new-listing': NewListingScreen },
-    { initialUrl, wrapper: ({ children }) => <PaperProvider>{children}</PaperProvider> },
+    { initialUrl, wrapper: ({ children }) => <AppProviders>{children}</AppProviders> },
   );
 }
 

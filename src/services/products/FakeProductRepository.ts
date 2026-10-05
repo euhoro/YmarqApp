@@ -1,4 +1,4 @@
-import { parseLegacyProducts, type Product } from '@/domain/product';
+import { parseLegacyProducts, type NewProduct, type Product } from '@/domain/product';
 
 import type { ProductRepository } from './ProductRepository';
 
@@ -74,10 +74,42 @@ export const FAKE_LEGACY_PRODUCTS = [
   },
 ];
 
+const SEARCHABLE: (keyof Product)[] = ['description', 'hashtag', 'category', 'location'];
+
+let nextId = 1;
+const newId = () => `local-${Date.now().toString(36)}-${nextId++}`;
+
+/** In-memory products; new listings live until the app reloads. */
 export class FakeProductRepository implements ProductRepository {
-  constructor(private readonly products: Product[] = parseLegacyProducts(FAKE_LEGACY_PRODUCTS)) {}
+  private products: Product[];
+
+  constructor(products: Product[] = parseLegacyProducts(FAKE_LEGACY_PRODUCTS)) {
+    this.products = [...products];
+  }
 
   async listProducts(_userId: string): Promise<Product[]> {
     return [...this.products];
+  }
+
+  async getProduct(id: string): Promise<Product | null> {
+    return this.products.find((product) => product.id === id) ?? null;
+  }
+
+  async searchProducts(query: string): Promise<Product[]> {
+    const needle = query.trim().toLocaleLowerCase();
+    if (!needle) return [...this.products];
+    return this.products.filter((product) =>
+      SEARCHABLE.some((field) =>
+        String(product[field] ?? '')
+          .toLocaleLowerCase()
+          .includes(needle),
+      ),
+    );
+  }
+
+  async createProduct(input: NewProduct): Promise<Product> {
+    const product: Product = { id: newId(), ...input };
+    this.products = [product, ...this.products];
+    return product;
   }
 }

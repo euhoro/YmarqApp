@@ -40,6 +40,22 @@ The dev server reloads on every save. Press `Ctrl+C` in the terminal to stop it.
 
 **Switching data sources:** set `EXPO_PUBLIC_DATA_SOURCE` in `.env.local` to `fake` (default), `firestore` (after #9) or `legacy` (with `EXPO_PUBLIC_LEGACY_API_URL`), then restart `npm run web`.
 
+## 2b. Run the API (`api/`)
+
+The backend is a separate Node package in `api/` (Hono, TypeScript), deployed to Vercel as its own project (#31).
+
+```bash
+cd api
+npm install
+npm run dev        # http://localhost:3001/health → {"ok":true}
+npm run verify     # lint, typecheck, format check, Vitest
+```
+
+- Storage is chosen with `STORE` (`memory` by default; `postgres` from #32). See `api/.env.example`.
+- Every store implements `ProductStore` and must pass the shared contract tests in `api/src/stores/__tests__/productStoreContract.ts`, which is how Postgres (and DynamoDB later) stay interchangeable.
+- CI runs the API checks in a separate `api` job.
+
+
 ## 3. Test it
 
 ### Automated (the same checks CI runs on every PR)
@@ -65,7 +81,8 @@ Run `npm run web` (or open the live build at https://ymarq-app.vercel.app) and c
 |---|---|---|---|
 | 1 | Open http://localhost:8081 | "Ymarq" header, feed placeholder | #8 (real feed with products) |
 | 2 | Click **Settings** | URL `/settings`; shows signed-in user `1111111111`, data source `fake`, version `1.0.0` | #8 (header icon) |
-| 2c | Open `/new-listing` | "New listing" header, "No photo" | #8 (camera button on the feed) |
+| 2c | Camera button (or open `/new-listing`) → type `Selling my Suzuki Swift 2012, 25,000 ₪, Tel Aviv` | Price 25000 ₪, category Vehicles, location Tel Aviv filled in; editing a field keeps your value | #52 (smarter extraction) |
+| 2d | **Publish** | Back on the feed, the new listing first with "₪25,000 · Tel Aviv" (in memory until reload) | #36 (saved on the server) |
 | 3 | Browser back | Returns to the feed | |
 | 4 | Settings → **Sign out** | Goes to **Sign in**; any other URL also lands there while signed out | |
 | 4b | Sign in: +972, `050-123-4567`, **Send code**, code `000000` | "Wrong code" error | #10 (real SMS) |
