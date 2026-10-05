@@ -3,15 +3,17 @@ import { parseLegacyProducts, type NewProduct, type Product } from '@/domain/pro
 import type { ProductRepository } from './ProductRepository';
 
 /**
- * Sample data in the legacy wire format. The first entry is the 2014 app's own mock (kept without a photo,
- * which also shows the placeholder). Photos: picsum.photos by fixed id (Unsplash licence).
+ * Sample data in the legacy wire format. The first entry is the 2014 app's own mock.
+ * Photos: picsum.photos by fixed id (Unsplash licence); the Suzuki Swift is a public-domain photo from
+ * Wikimedia Commons ("2009 Suzuki Swift (RS416) Sport 5-door hatchback (2009-06-06).jpg").
  */
 export const FAKE_LEGACY_PRODUCTS = [
   {
     Description: 'Suzuki Swift',
     Hashtag: 'Nice car',
     Id: 'e7b6646b-4718-4abf-8260-73188d395c30',
-    Image: '',
+    Image:
+      'https://upload.wikimedia.org/wikipedia/commons/thumb/9/93/2009_Suzuki_Swift_%28RS416%29_Sport_5-door_hatchback_%282009-06-06%29.jpg/960px-2009_Suzuki_Swift_%28RS416%29_Sport_5-door_hatchback_%282009-06-06%29.jpg',
     PublisherId: '',
   },
   {
