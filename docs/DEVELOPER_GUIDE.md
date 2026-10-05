@@ -109,7 +109,7 @@ issue (spec) → branch → commits → PR (CI + preview) → review → squash-
 
 - **Parent/child:** every feature issue is a **sub-issue** of the Roadmap (#22).
 - **Dependencies:** each issue lists them under "Depends on" *and* uses GitHub's **Relationships → Blocked by**, so the issue page shows what it waits for and what it unblocks.
-- **Graph:** the Roadmap issue contains a Mermaid dependency graph. Update it when you add an issue with dependencies.
+- **Graph:** the Roadmap issue's dependency graph and "ready now / blocked / done" lists are generated from GitHub. After adding issues or changing *Blocked by* links, run `npm run roadmap -- --write`.
 
 ### Summaries in issues
 

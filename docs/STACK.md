@@ -56,9 +56,9 @@ Decisions and their dates live in the Decisions log in [`REVIVAL_2026.md`](REVIV
 | Part | Status | What it does | Why this | Alternatives |
 |---|---|---|---|---|
 | **Firebase Authentication** | ✅ decided | Phone-number sign-in (SMS code); later Google sign-in | Best phone sign-in available: no SMS permissions needed on Android, built-in SMS-fraud protection, project already set up | AWS Cognito (SMS registration, own abuse protection), Supabase Auth (needs Twilio), Clerk, Auth0 |
-| **Ymarq API (TypeScript on Vercel Functions)** | 🟨 | Products, listings, photos; checks the Firebase sign-in token on every request | Same language and repo as the app; same vendor as the web hosting; scales to zero | Python FastAPI on AWS Lambda (the earlier plan), Next.js route handlers, Firebase Cloud Functions |
-| **Postgres (Neon, through Vercel)** | ✅ Postgres decided · 🟨 Neon | Stores users, products, later friends and messages | Relational data (friends, feeds) is simple in SQL; Neon has a free tier and costs nothing while idle | AWS RDS (~$15/month), Supabase, Google Cloud SQL; DynamoDB behind the same repository interface |
-| **Vercel Blob** | 🟨 | Stores listing photos | Same vendor; direct uploads from the app | AWS S3, Firebase Storage, Cloudflare R2 |
+| **Ymarq API (Hono, TypeScript, on Vercel Functions)** | ✅ decided | Products, listings, photos; checks the Firebase sign-in token on every request | Same language and repo as the app; same vendor as the web hosting; scales to zero | Next.js route handlers (only worth it if we want a separate server-rendered site), Python FastAPI on AWS Lambda (the earlier plan), Firebase Cloud Functions |
+| **Postgres (Neon, through Vercel)** | ✅ decided | Stores users, products, later friends and messages | Relational data (friends, feeds) is simple in SQL; Neon has a free tier and costs nothing while idle | AWS RDS (~$15/month), Supabase, Google Cloud SQL; DynamoDB behind the same repository interface |
+| **Vercel Blob** | ✅ decided | Stores listing photos | Same vendor; direct uploads from the app | AWS S3, Firebase Storage, Cloudflare R2 |
 | **Repository pattern** | ✅ | The app talks to `ProductRepository`, the API to a storage interface | Swapping fake ↔ API in the app, or Postgres ↔ DynamoDB in the API, touches one file | — |
 
 ### Dropped or deferred
@@ -73,7 +73,7 @@ Decisions and their dates live in the Decisions log in [`REVIVAL_2026.md`](REVIV
 
 | Option | Vendors (besides GitHub/Expo) | Pros | Cons |
 |---|---|---|---|
-| **A. Vercel + Neon + Firebase Auth** (proposed) | Vercel, Firebase | Reuses what's set up; TypeScript everywhere; $0 while building; PR previews | Vercel Pro ($20/month) needed for commercial use |
+| **A. Vercel + Neon + Firebase Auth** ✅ chosen | Vercel, Firebase | Reuses what's set up; TypeScript everywhere; $0 while building; PR previews | Vercel Pro ($20/month) needed for commercial use |
 | **B. All Google: Firebase Auth + Hosting + Cloud Functions + Data Connect (Postgres)** | Firebase only | One vendor; free commercial web hosting | Postgres (Cloud SQL) costs ~$10/month from day one; Blaze plan required; less flexible |
 | **C. Supabase (Postgres + Auth + Storage + Functions)** | Supabase, Twilio (for SMS) | Postgres-first, one backend vendor | Phone sign-in needs Twilio; free projects pause when idle |
 | **D. AWS + Python + Firebase Auth** (earlier plan) | AWS, Vercel, Firebase | Most control, scales furthest | Three vendors, second language, most setup |

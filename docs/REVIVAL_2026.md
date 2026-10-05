@@ -72,7 +72,7 @@ Every behaviour found in the code, and what it becomes.
 | Server state | TanStack Query | Caching, loading/error states and refresh for free |
 | Validation | zod | Parses untrusted API/Firestore data into typed objects |
 | Auth | Firebase Auth (phone, later Google). Native: `@react-native-firebase/*`; web: Firebase JS SDK; behind `AuthService`. | The native SDKs are needed for phone auth on Android/iOS |
-| Data + API | Ymarq API (TypeScript, Vercel Functions) + Postgres (Neon) + Vercel Blob, behind repositories. Proposed, see `docs/STACK.md` | One language, two vendors |
+| Data + API | Ymarq API (Hono, TypeScript, Vercel Functions) + Postgres (Neon) + Vercel Blob, behind repositories. See `docs/STACK.md` | One language, two vendors |
 | Camera | `expo-image-picker` (in-app viewfinder via `expo-camera` only if needed later) | Least code and works on all three platforms |
 | Images | `expo-image` | Caching, fast image display |
 | Tests | Jest (`jest-expo`) + React Native Testing Library; Maestro E2E later | Unit/component tests run in CI without a device |
@@ -144,7 +144,9 @@ docs/REVIVAL_2026.md   # this file
 | 2026-10-05 | Backend sources found (`YmarqOrg/YMarqServ`, .NET WCF, 2014): the Ymarq endpoints were mocks (hardcoded "Suzuki Swift" for user `1111111111`); the rest is a 2012 photo-upload sample whose database holds only Windows sample images. **Nothing to migrate**; the API shape is already in the app's data model. #15 closed. | owner + Claude |
 | 2026-10-05 | D-A revised: **Firebase for phone sign-in only**. Firestore and Firebase Hosting dropped. | owner |
 | 2026-10-05 | Database: **Postgres**, behind a repository interface in the API so DynamoDB stays possible. | owner |
-| 2026-10-05 | Keep the **fake data source** until the API exists. AWS deferred. Stack kept lean: proposed **TypeScript API on Vercel Functions + Neon Postgres + Vercel Blob** (see `docs/STACK.md`), awaiting confirmation. | owner + Claude |
+| 2026-10-05 | Keep the **fake data source** until the API exists. AWS deferred. Stack kept lean: **option A**, a TypeScript API on Vercel Functions + Neon Postgres + Vercel Blob + Firebase phone sign-in (see `docs/STACK.md`). Vercel Pro ($20/month) at commercial launch. | owner |
+| 2026-10-05 | API framework: **Hono** (API-only, runs natively on Vercel), in `api/` in this repo. Not Next.js: the Expo app already is the website. | owner |
+| 2026-10-05 | Order: **UI first on mock data** (fake repositories), then build the new API (the legacy server had no real logic to port). | owner |
 | 2026-10-05 | Tracker statuses are updated once per wave (not in feature PRs) to avoid merge conflicts between parallel PRs. | Claude |
 | 2026-10-05 | Web production: https://ymarq-app.vercel.app (Vercel, deploys `master`). `master` protected by ruleset "master-safe" (PR + both CI checks + up to date). | owner |
 
@@ -172,101 +174,19 @@ docs/REVIVAL_2026.md   # this file
 
 ### Issues and dependency graph
 
-The pinned [Roadmap epic #22](https://github.com/euhoro/YmarqApp/issues/22) is the live view: every issue is its sub-issue, and dependencies use GitHub's native *Blocked by* links. Arrow = "must be done before"; green = agent-ready, blue = pairing, grey = deferred.
+The live view is the pinned [Roadmap epic #22](https://github.com/euhoro/YmarqApp/issues/22): every issue is its sub-issue, dependencies use GitHub's native *Blocked by* links, and the dependency graph plus "ready now / blocked / done" lists are **generated from GitHub** by `npm run roadmap -- --write` (`scripts/roadmap.mjs`). Run it after adding issues or changing dependencies.
 
-```mermaid
-flowchart LR
-  nF2a["#3 F2a<br/>useProducts() data hook"]
-  nF2b["#4 F2b<br/>Product list UI components"]
-  nF4["#5 F4<br/>Take a photo with the camera"]
-  nF7["#6 F7<br/>Settings screen"]
-  nF1["#7 F1<br/>Brand: app icon, splash and theme"]
-  nF3["#8 F3<br/>Feed screen: real data, refresh, camera button"]
-  nF2c["#9 F2c<br/>Firestore product repository"]
-  nF6["#10 F6<br/>Phone number sign-in (web)"]
-  nCD_WEB["#11 CD-WEB<br/>Web deploys on Vercel (PR previews + production)"]
-  nCD_EAS["#12 CD-EAS<br/>Native builds with EAS (iOS Simulator + Android)"]
-  nF6b["#13 F6b<br/>Phone sign-in on iOS and Android (native)"]
-  nF6c["#14 F6c<br/>Google sign-in"]
-  nLEGACY["#15 LEGACY<br/>Plug in the legacy backend"]
-  nAGENTS["#16 AGENTS<br/>Enable agent automation (Claude Code GitHub Action)"]
-  nREL_WEB["#17 REL-WEB<br/>web production"]
-  nREL_IOS["#18 REL-IOS<br/>iOS (TestFlight → App Store)"]
-  nREL_AND["#19 REL-AND<br/>Android (Play internal track → production)"]
-  nF9["#20 F9<br/>Create, edit and delete listings"]
-  nF10["#21 F10<br/>Contacts linking and messaging"]
-  nF2a --> nF3
-  nF2b --> nF3
-  nF4 --> nF3
-  nF2c --> nF6
-  nF3 --> nF6
-  nF6 --> nF6b
-  nCD_EAS --> nF6b
-  nF6 --> nF6c
-  nF1 --> nREL_WEB
-  nF3 --> nREL_WEB
-  nF6 --> nREL_WEB
-  nCD_WEB --> nREL_WEB
-  nF6b --> nREL_IOS
-  nREL_WEB --> nREL_IOS
-  nF4 --> nREL_IOS
-  nF7 --> nREL_IOS
-  nF6b --> nREL_AND
-  nREL_WEB --> nREL_AND
-  nF4 --> nREL_AND
-  nF7 --> nREL_AND
-  nF4 --> nF9
-  nF2c --> nF9
-  nF6 --> nF9
-  nF6b --> nF10
-  nF9 --> nF10
-  classDef ready fill:#dff5e3,stroke:#0e8a16,color:#000
-  classDef pairing fill:#dbe9fb,stroke:#1d76db,color:#000
-  classDef later fill:#eeeeee,stroke:#999,color:#555
-  classDef done fill:#ffffff,stroke:#0e8a16,stroke-dasharray:4 2,color:#555
-  class nF2a done
-  class nF2b done
-  class nF4 done
-  class nF7 done
-  class nF1 pairing
-  class nF3 ready
-  class nF2c pairing
-  class nF6 pairing
-  class nCD_WEB pairing
-  class nCD_EAS pairing
-  class nF6b pairing
-  class nF6c later
-  class nLEGACY pairing
-  class nAGENTS later
-  class nREL_WEB later
-  class nREL_IOS later
-  class nREL_AND later
-  class nF9 later
-  class nF10 later
-```
+Issue groups (2026-10-05):
 
-| Wave | Issue | Type | Blocked by |
-|---|---|---|---|
-| 0 | ✅ #1 Expo scaffold · ✅ #2 CI | – | – |
-| 1 | ✅ #3 F2a: useProducts() data hook | agent-ready | – |
-| 1 | ✅ #4 F2b: Product list UI components | agent-ready | – |
-| 1 | ✅ #5 F4: Take a photo with the camera | agent-ready | – |
-| 1 | ✅ #6 F7: Settings screen | agent-ready | – |
-| 1 | #7 F1: Brand: app icon, splash and theme | pairing | – |
-| 2 | #8 F3: Feed screen: real data, refresh, camera button | agent-ready | #3, #4, #5 |
-| 2 | #9 F2c: Firestore product repository | pairing | – |
-| 2 | #10 F6: Phone number sign-in (web) | pairing | #9, #8 |
-| 2 | #11 CD: Web deploys on Vercel (PR previews + production) | pairing | – |
-| 2 | #12 CD: Native builds with EAS (iOS Simulator + Android) | pairing | – |
-| 3 | #13 F6b: Phone sign-in on iOS and Android (native) | pairing | #10, #12 |
-| 3 | #14 F6c: Google sign-in | pairing | #10 |
-| 3 | #15 Plug in the legacy backend | pairing | – |
-| 3 | #16 Enable agent automation (Claude Code GitHub Action) | pairing | – |
-| 4 | #17 Release: web production | pairing | #7, #8, #10, #11 |
-| 4 | #18 Release: iOS (TestFlight → App Store) | pairing | #13, #17, #5, #6 |
-| 4 | #19 Release: Android (Play internal track → production) | pairing | #13, #17, #5, #6 |
-| later | #20 F9: Create, edit and delete listings | needs-decision | #5, #9, #10 |
-| later | #21 F10: Contacts linking and messaging | needs-decision | #13, #20 |
+| Group | Issues |
+|---|---|
+| Done | #3 #4 #5 #6 (Wave 1), #15 (legacy server reviewed); #9 Firestore replaced |
+| UI on mock data (now) | #8 feed wiring (PR #29), #37 sign-in screen + auth gate, #38 create listing, #7 brand |
+| Backend: Hono API | #30 skeleton → #32 Postgres store, #33 token check → #34 products endpoints → #36 app connects; #31 provisioning, #35 photo uploads |
+| Sign-in, real | #10 Firebase on web → #13 native, #14 Google |
+| Delivery | #11 Vercel, #12 EAS builds, #16 agents |
+| Release | #17 web, #18 iOS, #19 Android |
+| Later | #20 edit/delete listings, #21 contacts + messaging |
 
 ---
 
