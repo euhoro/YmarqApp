@@ -9,6 +9,7 @@ export const DEMO_USER: AuthUser = { id: '1111111111', phoneNumber: null, email:
 export const FAKE_SMS_CODE = '123456';
 
 export class FakeAuthService implements AuthService {
+  readonly demoHint = `Demo mode: any mobile number works; the code is ${FAKE_SMS_CODE}.`;
   private listeners = new Set<(user: AuthUser | null) => void>();
 
   constructor(private user: AuthUser | null = DEMO_USER) {}

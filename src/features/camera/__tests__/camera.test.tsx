@@ -3,7 +3,7 @@ import { fireEvent, renderRouter, screen, waitFor } from 'expo-router/testing-li
 import { View } from 'react-native';
 import { PaperProvider } from 'react-native-paper';
 
-import NewListingScreen from '@/app/new-listing';
+import NewListingScreen from '@/app/(app)/new-listing';
 
 import { TakePhotoFab } from '../TakePhotoFab';
 

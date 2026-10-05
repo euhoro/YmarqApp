@@ -36,6 +36,8 @@ No Java, Android Studio or Firebase files are needed for day-to-day work: the ap
 
 The dev server reloads on every save. Press `Ctrl+C` in the terminal to stop it.
 
+**Starting signed out:** set `EXPO_PUBLIC_FAKE_AUTH_SIGNED_IN=false` in `.env.local` to open the app on the sign-in screen (the fake auth accepts any mobile number with code `123456`).
+
 **Switching data sources:** set `EXPO_PUBLIC_DATA_SOURCE` in `.env.local` to `fake` (default), `firestore` (after #9) or `legacy` (with `EXPO_PUBLIC_LEGACY_API_URL`), then restart `npm run web`.
 
 ## 3. Test it
@@ -63,10 +65,11 @@ Run `npm run web` (or open the live build at https://ymarq-app.vercel.app) and c
 |---|---|---|---|
 | 1 | Open http://localhost:8081 | "Ymarq" header, feed placeholder | #8 (real feed with products) |
 | 2 | Click **Settings** | URL `/settings`; shows signed-in user `1111111111`, data source `fake`, version `1.0.0` | #8 (header icon) |
-| 2b | Click **Sign out** | Goes to `/sign-in`; back to Settings shows "Not signed in" (fake, resets on reload) | #10 |
 | 2c | Open `/new-listing` | "New listing" header, "No photo" | #8 (camera button on the feed) |
 | 3 | Browser back | Returns to the feed | |
-| 4 | Open http://localhost:8081/sign-in | "Sign in" header | #10 (phone sign-in) |
+| 4 | Settings → **Sign out** | Goes to **Sign in**; any other URL also lands there while signed out | |
+| 4b | Sign in: +972, `050-123-4567`, **Send code**, code `000000` | "Wrong code" error | #10 (real SMS) |
+| 4c | Enter code `123456` | Lands on the feed; Settings shows `+972501234567` | |
 | 5 | Toggle your OS dark mode | Colors follow the system theme | #7 (brand colors) |
 | 6 | Narrow the window to phone width | No horizontal scrolling | |
 

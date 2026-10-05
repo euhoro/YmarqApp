@@ -1,9 +1,11 @@
 import type { AuthService } from './AuthService';
-import { FakeAuthService } from './FakeAuthService';
+import { getFakeAuthSignedIn } from '@/config/env';
+
+import { DEMO_USER, FakeAuthService } from './FakeAuthService';
 
 export type { AuthService, PhoneVerification } from './AuthService';
 
 /** Firebase Auth replaces the fake here in F6. */
 export function createAuthService(): AuthService {
-  return new FakeAuthService();
+  return new FakeAuthService(getFakeAuthSignedIn() ? DEMO_USER : null);
 }
