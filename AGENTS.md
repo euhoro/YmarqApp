@@ -6,10 +6,12 @@ so parallel PRs don't conflict.
 
 ## Project rules
 
+- **Aim at the goal:** the launch [Definition of Done](docs/REVIVAL_2026.md#0-definition-of-done-launch) (register, log in, sell, search, chat, notifications, real server). Prefer `dod` issues, and keep every flow as simple for the user as possible.
+
 - **Done means green:** `npm run verify` (lint + typecheck + format check + tests) must pass. Run `npm run format` to fix formatting. If you change screens or navigation, also run `npm run build:web && npm run test:e2e`.
 - **Stay in scope:** only touch the files your GitHub issue names. Don't add dependencies unless the issue says so; they are pre-installed.
 - **Services, not SDKs, in UI:** screens and hooks get data only through `useServices()` (`src/services/ServicesProvider.tsx`). Never import Firebase or `fetch` from UI code.
-- **Data source switch:** `EXPO_PUBLIC_DATA_SOURCE` = `fake` (default) | `firestore` | `legacy`. Every source returns the domain `Product` type; stored/wire data uses the **legacy PascalCase model** (`LegacyProductSchema` in `src/domain/product.ts`). Don't change that model without a decision recorded in the tracker.
+- **Data source switch:** `EXPO_PUBLIC_DATA_SOURCE` = `fake` (default) | `firestore` | `legacy`. Every source returns the domain `Product` type; stored/wire data uses the **legacy PascalCase model** (`LegacyProductSchema` in `src/domain/product.ts`). Don't change that model without a decision recorded in the tracker (2026-10-05 added optional `Price`, `Currency`, `Category`, `Location`).
 - **Layout:** routes in `src/app/`, feature UI + hooks in `src/features/<name>/`, services in `src/services/`, domain types in `src/domain/`. Tests go in `__tests__/` next to the code, never under `src/app/`. Route-level integration tests use `renderRouter` (see `src/__tests__/navigation.test.tsx`); browser smoke tests live in `e2e/`.
 - **Platforms:** code must work on web, iOS and Android. Put platform-specific code in `*.web.ts` / `*.native.ts` files.
 - **Secrets:** never commit secrets, `.env.local`, `google-services.json` or `GoogleService-Info.plist`.
