@@ -27,6 +27,11 @@ test('sign out, then sign in again with the demo code', async ({ page }) => {
   await page.getByLabel('Code').fill('123456');
   await page.getByRole('button', { name: 'Verify' }).click();
 
+  // First sign-in with a new number: choose a display name.
+  await expect(page).toHaveURL(/\/register$/);
+  await page.getByLabel('Your name').fill('Dana');
+  await page.getByRole('button', { name: 'Continue' }).click();
+
   await expect(page).toHaveURL(/\/$/);
   await expect(page.getByText('Suzuki Swift')).toBeVisible();
 });

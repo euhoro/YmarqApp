@@ -1,9 +1,8 @@
 import { renderRouter, fireEvent, screen, waitFor } from 'expo-router/testing-library';
-import { PaperProvider } from 'react-native-paper';
 
 import { FakeAuthService } from '@/services/auth/FakeAuthService';
 import { FakeProductRepository } from '@/services/products/FakeProductRepository';
-import { ServicesProvider } from '@/services/ServicesProvider';
+import { AppProviders } from '@/providers/AppProviders';
 
 import { SettingsScreen } from '../SettingsScreen';
 
@@ -18,9 +17,9 @@ function renderSettings(auth: FakeAuthService) {
     {
       initialUrl: '/settings',
       wrapper: ({ children }) => (
-        <ServicesProvider services={{ auth, products: new FakeProductRepository() }}>
-          <PaperProvider>{children}</PaperProvider>
-        </ServicesProvider>
+        <AppProviders services={{ auth, products: new FakeProductRepository() }}>
+          {children}
+        </AppProviders>
       ),
     },
   );
@@ -30,6 +29,7 @@ describe('SettingsScreen', () => {
   it('shows the user, data source and app version', async () => {
     await renderSettings(new FakeAuthService());
 
+    expect(await screen.findByText('Demo user')).toBeTruthy(); // display name (F11)
     expect(screen.getByText('1111111111')).toBeTruthy(); // demo user id (no phone number)
     expect(screen.getByText('fake')).toBeTruthy();
     expect(screen.getByText('9.9.9')).toBeTruthy();

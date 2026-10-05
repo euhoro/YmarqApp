@@ -86,7 +86,7 @@ Run `npm run web` (or open the live build at https://ymarq-app.vercel.app) and c
 | 3 | Browser back | Returns to the feed | |
 | 4 | Settings → **Sign out** | Goes to **Sign in**; any other URL also lands there while signed out | |
 | 4b | Sign in: +972, `050-123-4567`, **Send code**, code `000000` | "Wrong code" error | #10 (real SMS) |
-| 4c | Enter code `123456` | Lands on the feed; Settings shows `+972501234567` | |
+| 4c | Enter code `123456` | First time for this number: **"What's your name?"** → type a name → **Continue** → feed; Settings shows the name and `+972501234567` | #48 (names saved on the server) |
 | 5 | Toggle your OS dark mode | Colors follow the system theme | #7 (brand colors) |
 | 6 | Narrow the window to phone width | No horizontal scrolling | |
 
