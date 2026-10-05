@@ -40,6 +40,22 @@ The dev server reloads on every save. Press `Ctrl+C` in the terminal to stop it.
 
 **Switching data sources:** set `EXPO_PUBLIC_DATA_SOURCE` in `.env.local` to `fake` (default), `firestore` (after #9) or `legacy` (with `EXPO_PUBLIC_LEGACY_API_URL`), then restart `npm run web`.
 
+## 2b. Run the API (`api/`)
+
+The backend is a separate Node package in `api/` (Hono, TypeScript), deployed to Vercel as its own project (#31).
+
+```bash
+cd api
+npm install
+npm run dev        # http://localhost:3001/health → {"ok":true}
+npm run verify     # lint, typecheck, format check, Vitest
+```
+
+- Storage is chosen with `STORE` (`memory` by default; `postgres` from #32). See `api/.env.example`.
+- Every store implements `ProductStore` and must pass the shared contract tests in `api/src/stores/__tests__/productStoreContract.ts`, which is how Postgres (and DynamoDB later) stay interchangeable.
+- CI runs the API checks in a separate `api` job.
+
+
 ## 3. Test it
 
 ### Automated (the same checks CI runs on every PR)

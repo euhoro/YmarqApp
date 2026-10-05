@@ -14,6 +14,7 @@ so parallel PRs don't conflict.
 - **Data source switch:** `EXPO_PUBLIC_DATA_SOURCE` = `fake` (default) | `firestore` | `legacy`. Every source returns the domain `Product` type; stored/wire data uses the **legacy PascalCase model** (`LegacyProductSchema` in `src/domain/product.ts`). Don't change that model without a decision recorded in the tracker (2026-10-05 added optional `Price`, `Currency`, `Category`, `Location`).
 - **Layout:** routes in `src/app/`: **screens for signed-in users go in `src/app/(app)/`** (protected automatically by `RootNavigator`), public screens such as `sign-in` stay directly in `src/app/`; feature UI + hooks in `src/features/<name>/`, services in `src/services/`, domain types in `src/domain/`. Tests go in `__tests__/` next to the code, never under `src/app/`. Route-level integration tests use `renderRouter` (see `src/__tests__/navigation.test.tsx`); browser smoke tests live in `e2e/`.
 - **Platforms:** code must work on web, iOS and Android. Put platform-specific code in `*.web.ts` / `*.native.ts` files.
+- **API (`api/`):** a separate npm package (Hono on Vercel). Done means `npm --prefix api run verify` passes. Routes get storage only through the `Stores` passed to `createApp`; new stores must pass the `productStoreContract` tests. Never import app code into `api/` or the reverse.
 - **Secrets:** never commit secrets, `.env.local`, `google-services.json` or `GoogleService-Info.plist`.
 - **Commits:** plain messages; no AI attribution/co-author trailers.
 
