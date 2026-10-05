@@ -1,8 +1,10 @@
-import { renderRouter, screen } from 'expo-router/testing-library';
+import { renderRouter, screen, waitFor } from 'expo-router/testing-library';
 
+import AppLayout from '@/app/(app)/_layout';
+import FeedScreen from '@/app/(app)/index';
+import NewListingScreen from '@/app/(app)/new-listing';
+import SettingsScreen from '@/app/(app)/settings';
 import RootLayout from '@/app/_layout';
-import FeedScreen from '@/app/index';
-import SettingsScreen from '@/app/settings';
 import SignInScreen from '@/app/sign-in';
 
 // Integration test: the real root layout (providers + stack) with the real screens.
@@ -10,8 +12,10 @@ import SignInScreen from '@/app/sign-in';
 // router helpers, so keep the handle for getPathname() and await it before querying.
 const routes = {
   _layout: RootLayout,
-  index: FeedScreen,
-  settings: SettingsScreen,
+  '(app)/_layout': AppLayout,
+  '(app)/index': FeedScreen,
+  '(app)/settings': SettingsScreen,
+  '(app)/new-listing': NewListingScreen,
   'sign-in': SignInScreen,
 };
 
@@ -36,10 +40,10 @@ describe('app navigation', () => {
   // The header buttons (Settings, Refresh) are covered by e2e/smoke.spec.ts:
   // the native-stack header isn't rendered in Jest.
 
-  it('deep-links to sign-in', async () => {
+  it('sends signed-in users away from /sign-in to the feed', async () => {
     const app = renderRouter(routes, { initialUrl: '/sign-in' });
     await app;
 
-    expect(app.getPathname()).toBe('/sign-in');
+    await waitFor(() => expect(app.getPathname()).toBe('/'));
   });
 });

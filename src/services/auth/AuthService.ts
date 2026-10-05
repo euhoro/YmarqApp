@@ -16,4 +16,6 @@ export interface AuthService {
   /** Sends an SMS code. `phoneNumber` is in E.164 format, e.g. +972501234567. */
   startPhoneSignIn(phoneNumber: string): Promise<PhoneVerification>;
   signOut(): Promise<void>;
+  /** Shown on the sign-in screen when the service is a demo (e.g. which code to type). */
+  readonly demoHint?: string;
 }

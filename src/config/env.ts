@@ -21,3 +21,8 @@ export function getLegacyApiUrl(value = process.env.EXPO_PUBLIC_LEGACY_API_URL):
   }
   return value.replace(/\/+$/, '');
 }
+
+/** Fake auth starts signed in (handy for working on other screens) unless set to `false`. */
+export function getFakeAuthSignedIn(value = process.env.EXPO_PUBLIC_FAKE_AUTH_SIGNED_IN): boolean {
+  return value !== 'false';
+}
