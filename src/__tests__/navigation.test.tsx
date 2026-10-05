@@ -1,4 +1,4 @@
-import { fireEvent, renderRouter, screen, waitFor } from 'expo-router/testing-library';
+import { renderRouter, screen } from 'expo-router/testing-library';
 
 import RootLayout from '@/app/_layout';
 import FeedScreen from '@/app/index';
@@ -16,22 +16,25 @@ const routes = {
 };
 
 describe('app navigation', () => {
-  it('opens on the feed', async () => {
+  it('opens on the feed with products and the camera button', async () => {
     const app = renderRouter(routes);
     await app;
 
-    expect(await screen.findByText(/Products feed/)).toBeTruthy();
+    expect(await screen.findByText('Suzuki Swift')).toBeTruthy(); // fake data source
+    expect(screen.getByLabelText('Take photo')).toBeTruthy();
     expect(app.getPathname()).toBe('/');
   });
 
-  it('navigates from the feed to settings', async () => {
-    const app = renderRouter(routes);
+  it('opens settings by URL', async () => {
+    const app = renderRouter(routes, { initialUrl: '/settings' });
     await app;
 
-    await fireEvent.press(await screen.findByText('Settings'));
-
-    await waitFor(() => expect(app.getPathname()).toBe('/settings'));
+    expect(await screen.findByText('Signed in as')).toBeTruthy();
+    expect(app.getPathname()).toBe('/settings');
   });
+
+  // The header buttons (Settings, Refresh) are covered by e2e/smoke.spec.ts:
+  // the native-stack header isn't rendered in Jest.
 
   it('deep-links to sign-in', async () => {
     const app = renderRouter(routes, { initialUrl: '/sign-in' });

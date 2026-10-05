@@ -1,12 +1,16 @@
 import { expect, test } from '@playwright/test';
 
-test('feed loads and navigates to settings', async ({ page }) => {
+test('feed shows products and the header opens settings', async ({ page }) => {
   await page.goto('/');
 
-  await expect(page.getByText('Products feed')).toBeVisible();
+  await expect(page.getByText('Suzuki Swift')).toBeVisible(); // fake data source
+  await expect(page.getByText('Nice car')).toBeVisible();
+  await expect(page.getByLabel('Take photo')).toBeVisible();
 
-  await page.getByText('Settings', { exact: true }).click();
+  await page.getByLabel('Refresh').click();
+  await expect(page.getByText('Suzuki Swift')).toBeVisible();
 
+  await page.getByLabel('Settings').click();
   await expect(page).toHaveURL(/\/settings$/);
   await expect(page.getByRole('heading', { name: 'Settings' })).toBeVisible();
 });
