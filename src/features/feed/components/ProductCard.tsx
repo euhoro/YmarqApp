@@ -2,7 +2,7 @@ import { Image } from 'expo-image';
 import { StyleSheet, View } from 'react-native';
 import { Card, Icon, useTheme } from 'react-native-paper';
 
-import type { Product } from '@/domain/product';
+import { formatPrice, type Product } from '@/domain/product';
 
 export function ProductCard({ product }: { product: Product }) {
   const theme = useTheme();
@@ -31,7 +31,12 @@ export function ProductCard({ product }: { product: Product }) {
             <Icon source="image-off-outline" size={40} color={theme.colors.onSurfaceVariant} />
           </View>
         )}
-        <Card.Title title={product.description} subtitle={product.hashtag} />
+        <Card.Title
+          title={product.description}
+          subtitle={[formatPrice(product), product.location, product.hashtag]
+            .filter(Boolean)
+            .join(' · ')}
+        />
       </View>
     </Card>
   );
