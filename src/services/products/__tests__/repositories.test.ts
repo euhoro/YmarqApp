@@ -15,6 +15,47 @@ describe('FakeProductRepository', () => {
   });
 });
 
+describe('FakeProductRepository search, get and create', () => {
+  it('searches case-insensitively across description, hashtag, category and location', async () => {
+    const repo = new FakeProductRepository();
+    const created = await repo.createProduct({
+      description: 'Sofa, almost new',
+      hashtag: '#home',
+      imageUrl: null,
+      publisherId: 'u1',
+      price: 900,
+      currency: 'ILS',
+      category: 'Furniture',
+      location: 'Haifa',
+    });
+
+    expect((await repo.searchProducts('SWIFT')).map((p) => p.description)).toEqual([
+      'Suzuki Swift',
+    ]);
+    expect((await repo.searchProducts('haifa')).map((p) => p.id)).toEqual([created.id]);
+    expect((await repo.searchProducts('furniture')).map((p) => p.id)).toContain(created.id);
+    expect(await repo.searchProducts('no-such-thing')).toEqual([]);
+  });
+
+  it('puts new listings first and finds them by id', async () => {
+    const repo = new FakeProductRepository();
+    const created = await repo.createProduct({
+      description: 'Lamp',
+      hashtag: '',
+      imageUrl: null,
+      publisherId: 'u1',
+      price: null,
+      currency: null,
+      category: null,
+      location: null,
+    });
+
+    expect((await repo.listProducts('u1'))[0].id).toBe(created.id);
+    expect(await repo.getProduct(created.id)).toEqual(created);
+    expect(await repo.getProduct('missing')).toBeNull();
+  });
+});
+
 describe('LegacyApiProductRepository', () => {
   it('calls the legacy GetProducts endpoint and parses the payload', async () => {
     const fetchFn = jest
@@ -32,7 +73,17 @@ describe('LegacyApiProductRepository', () => {
       'https://legacy.example.com/photos/GetProducts/1111111111',
     );
     expect(products).toEqual([
-      { id: '1', description: 'Bike', hashtag: '#bike', imageUrl: null, publisherId: null },
+      {
+        id: '1',
+        description: 'Bike',
+        hashtag: '#bike',
+        imageUrl: null,
+        publisherId: null,
+        price: null,
+        currency: null,
+        category: null,
+        location: null,
+      },
     ]);
   });
 

@@ -1,4 +1,4 @@
-import { parseLegacyProducts } from '../product';
+import { formatPrice, parseLegacyProducts } from '../product';
 
 describe('parseLegacyProducts', () => {
   it('maps the legacy payload to products', () => {
@@ -14,6 +14,10 @@ describe('parseLegacyProducts', () => {
         hashtag: 'Nice car',
         imageUrl: null,
         publisherId: null,
+        price: null,
+        currency: null,
+        category: null,
+        location: null,
       },
     ]);
   });
@@ -32,6 +36,29 @@ describe('parseLegacyProducts', () => {
 
     expect(products[0]).toMatchObject({ imageUrl: 'https://x/1.jpg', publisherId: 'u1' });
     expect(products[1]).toMatchObject({ imageUrl: null, publisherId: null });
+  });
+
+  it('reads the optional price, currency, category and location', () => {
+    const [product] = parseLegacyProducts([
+      {
+        Id: '3',
+        Description: 'Suzuki Swift',
+        Hashtag: '',
+        Price: 25000,
+        Currency: 'ILS',
+        Category: 'Vehicles',
+        Location: 'Tel Aviv',
+      },
+    ]);
+
+    expect(product).toMatchObject({
+      price: 25000,
+      currency: 'ILS',
+      category: 'Vehicles',
+      location: 'Tel Aviv',
+    });
+    expect(formatPrice(product)).toBe('₪25,000');
+    expect(formatPrice({ price: null, currency: null })).toBeNull();
   });
 
   it('rejects malformed data', () => {

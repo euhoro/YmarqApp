@@ -33,7 +33,11 @@ describe('useProducts', () => {
 
   it('exposes repository errors', async () => {
     const repo: ProductRepository = {
+      ...new FakeProductRepository(),
       listProducts: jest.fn().mockRejectedValue(new Error('Server down')),
+      getProduct: jest.fn(),
+      searchProducts: jest.fn(),
+      createProduct: jest.fn(),
     };
 
     const { result } = await setup(repo);

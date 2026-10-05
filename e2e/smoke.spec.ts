@@ -30,3 +30,17 @@ test('sign out, then sign in again with the demo code', async ({ page }) => {
   await expect(page).toHaveURL(/\/$/);
   await expect(page.getByText('Suzuki Swift')).toBeVisible();
 });
+
+test('sell: one sentence fills in the details and the listing appears first', async ({ page }) => {
+  // Opened directly: on web the camera button opens a file picker, which tests can't drive.
+  await page.goto('/new-listing');
+
+  await page.getByLabel('What are you selling?').fill('Wooden desk, 450 ₪, Haifa');
+  await expect(page.getByLabel('Price')).toHaveValue('450');
+  await expect(page.getByLabel('Location')).toHaveValue('Haifa');
+
+  await page.getByRole('button', { name: 'Publish' }).click();
+  await expect(page).toHaveURL(/\/$/);
+  await expect(page.getByText('Wooden desk, 450 ₪, Haifa')).toBeVisible();
+  await expect(page.getByText('₪450 · Haifa')).toBeVisible();
+});
