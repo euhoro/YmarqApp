@@ -6,6 +6,7 @@ for **Android, iOS and Web**.
 - **Developer guide** (run, test, workflow): [`docs/DEVELOPER_GUIDE.md`](docs/DEVELOPER_GUIDE.md)
 - **Tech stack** (what each part does, alternatives): [`docs/STACK.md`](docs/STACK.md)
 - **Plan and decisions:** [`docs/REVIVAL_2026.md`](docs/REVIVAL_2026.md)
+- **Launch goal:** [Definition of Done](docs/REVIVAL_2026.md#0-definition-of-done-launch): two users can register, log in, sell, search, chat and get notified, against the real server
 - **Live web app:** https://ymarq-app.vercel.app (deploys from `master`)
 - **Roadmap and what to work on next:** [issue #22](https://github.com/euhoro/YmarqApp/issues/22)
 
