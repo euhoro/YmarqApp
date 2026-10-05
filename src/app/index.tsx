@@ -1,19 +1,47 @@
-import { Link } from 'expo-router';
+import { router, Stack } from 'expo-router';
 import { StyleSheet, View } from 'react-native';
-import { Button, Text } from 'react-native-paper';
+import { IconButton } from 'react-native-paper';
 
-// Feed screen stub. The product list lands in F2 (useProducts hook + feed UI).
+import { TakePhotoFab } from '@/features/camera/TakePhotoFab';
+import { ProductList } from '@/features/feed/components/ProductList';
+import { useProducts } from '@/features/feed/useProducts';
+
 export default function FeedScreen() {
+  const { data, isLoading, error, refetch, isRefetching } = useProducts();
+
   return (
     <View style={styles.container}>
-      <Text variant="titleMedium">Products feed (coming in F2)</Text>
-      <Link href="/settings" asChild>
-        <Button mode="outlined">Settings</Button>
-      </Link>
+      <Stack.Screen
+        options={{
+          headerRight: () => (
+            <View style={styles.headerActions}>
+              <IconButton icon="refresh" accessibilityLabel="Refresh" onPress={() => refetch()} />
+              <IconButton
+                icon="cog"
+                accessibilityLabel="Settings"
+                onPress={() => router.push('/settings')}
+              />
+            </View>
+          ),
+        }}
+      />
+      <ProductList
+        products={data ?? []}
+        isLoading={isLoading}
+        error={error}
+        onRetry={() => refetch()}
+        refreshing={isRefetching}
+        onRefresh={() => refetch()}
+        contentContainerStyle={styles.listContent}
+      />
+      <TakePhotoFab />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: 16 },
+  container: { flex: 1 },
+  headerActions: { flexDirection: 'row' },
+  // Keeps the last card clear of the floating camera button.
+  listContent: { paddingBottom: 88 },
 });

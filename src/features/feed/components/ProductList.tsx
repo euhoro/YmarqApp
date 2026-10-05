@@ -1,4 +1,4 @@
-import { FlatList, StyleSheet, View } from 'react-native';
+import { FlatList, StyleSheet, View, type StyleProp, type ViewStyle } from 'react-native';
 import { ActivityIndicator, Button, Text } from 'react-native-paper';
 
 import type { Product } from '@/domain/product';
@@ -12,6 +12,8 @@ export interface ProductListProps {
   onRetry(): void;
   refreshing: boolean;
   onRefresh(): void;
+  /** Extra list padding, e.g. room for a floating button over the last card. */
+  contentContainerStyle?: StyleProp<ViewStyle>;
 }
 
 export function ProductList({
@@ -21,6 +23,7 @@ export function ProductList({
   onRetry,
   refreshing,
   onRefresh,
+  contentContainerStyle,
 }: ProductListProps) {
   if (isLoading) {
     return (
@@ -48,7 +51,7 @@ export function ProductList({
       data={products}
       keyExtractor={(product) => product.id}
       renderItem={({ item }) => <ProductCard product={item} />}
-      contentContainerStyle={styles.content}
+      contentContainerStyle={[styles.content, contentContainerStyle]}
       ListEmptyComponent={
         <View style={styles.centered}>
           <Text variant="titleMedium">No products yet</Text>
