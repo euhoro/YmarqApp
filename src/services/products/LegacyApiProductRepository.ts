@@ -21,4 +21,17 @@ export class LegacyApiProductRepository implements ProductRepository {
     }
     return parseLegacyProducts(await response.json());
   }
+
+  // The 2014 server had only GetProducts; the new API (#34) adds the rest.
+  async getProduct(): Promise<Product | null> {
+    throw new Error('Not supported by the legacy API.');
+  }
+
+  async searchProducts(): Promise<Product[]> {
+    throw new Error('Not supported by the legacy API.');
+  }
+
+  async createProduct(): Promise<Product> {
+    throw new Error('Not supported by the legacy API.');
+  }
 }

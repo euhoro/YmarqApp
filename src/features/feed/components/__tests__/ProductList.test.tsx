@@ -12,6 +12,10 @@ const PRODUCTS: Product[] = [
     hashtag: 'Nice car',
     imageUrl: null,
     publisherId: null,
+    price: null,
+    currency: null,
+    category: null,
+    location: null,
   },
   {
     id: 'b',
@@ -19,6 +23,10 @@ const PRODUCTS: Product[] = [
     hashtag: '#bike',
     imageUrl: 'https://example.com/bike.jpg',
     publisherId: 'u1',
+    price: 1200,
+    currency: 'ILS',
+    category: 'Sports',
+    location: 'Haifa',
   },
 ];
 
