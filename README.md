@@ -4,7 +4,9 @@ Classifieds shared between friends. Being revived in 2026 as one **React Native 
 for **Android, iOS and Web**.
 
 - **Developer guide** (run, test, workflow): [`docs/DEVELOPER_GUIDE.md`](docs/DEVELOPER_GUIDE.md)
+- **Tech stack** (what each part does, alternatives): [`docs/STACK.md`](docs/STACK.md)
 - **Plan and decisions:** [`docs/REVIVAL_2026.md`](docs/REVIVAL_2026.md)
+- **Live web app:** https://ymarq-app.vercel.app (deploys from `master`)
 - **Roadmap and what to work on next:** [issue #22](https://github.com/euhoro/YmarqApp/issues/22)
 
 ## Run it
