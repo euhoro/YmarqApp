@@ -9,7 +9,13 @@ import { ServicesProvider, type Services } from '@/services/ServicesProvider';
 import { darkTheme, lightTheme } from '@/theme/theme';
 
 /** Everything the app runs inside: services, data cache, Paper and navigation themes. Tests pass fake `services`. */
-export function AppProviders({ services, children }: { services?: Services; children: ReactNode }) {
+export function AppProviders({
+  services,
+  children,
+}: {
+  services?: Partial<Services>;
+  children: ReactNode;
+}) {
   const colorScheme = useColorScheme();
   const [queryClient] = useState(() => new QueryClient());
   const paperTheme = colorScheme === 'dark' ? darkTheme : lightTheme;
