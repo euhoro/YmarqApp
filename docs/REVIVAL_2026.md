@@ -41,12 +41,12 @@ Every behaviour found in the code, and what it becomes.
 |---|---|---|---|---|
 | F0 | **Build & project setup**: Gradle 2.1 / AGP 0.13 / jcenter | `build.gradle`, `app/build.gradle` | Expo app (TypeScript strict), Expo Router, ESLint + Prettier + `tsc`, Jest. Legacy Android sources removed. | ✅ scaffold |
 | F1 (#7) | **App shell**: single Activity, "Ymarq" label, launcher icon, Holo/Material theme | `MainActivity`, `styles.xml`, `drawable-*` | Expo Router root layout, React Native Paper (Material 3) theme with light/dark mode, app icon + splash rebuilt from `ic_launcher-web.png` / `ym_logo.jpg` | ⬜ |
-| F2 (#3, #4, #9) | **Product feed**: on screen open, GET products for a hardcoded user code `1111111111` and show `"Description - Hashtag"` text rows | `FetchProductsTask`, `getProductDataFromJson` | `feed` route: a `FlatList` of product cards with image, description and hashtag, plus loading/empty/error states ← `useProducts()` (TanStack Query) ← `ProductRepository` interface (fake now, then Firestore; the legacy API later if its sources are found). The signed-in user replaces the hardcoded code. | ⬜ |
+| F2 (#3, #4, #9) | **Product feed**: on screen open, GET products for a hardcoded user code `1111111111` and show `"Description - Hashtag"` text rows | `FetchProductsTask`, `getProductDataFromJson` | `feed` route: a `FlatList` of product cards with image, description and hashtag, plus loading/empty/error states ← `useProducts()` (TanStack Query) ← `ProductRepository` interface (fake now, then Firestore; the legacy API later if its sources are found). The signed-in user replaces the hardcoded code. | 🟨 hook + list done (#3, #4); wiring #8, Firestore #9 |
 | F3 (#8) | **Refresh**: overflow-menu "Refresh" re-fetches, but with a *different* hardcoded code `1222222222` (bug) | `onOptionsItemSelected` | Pull-to-refresh (`RefreshControl`) plus a header action, using the same user as F2 | ⬜ |
-| F4 (#5) | **Take a photo**: overflow "Camera" launches the system camera and writes to public `Pictures/picFolder/N.jpg` via a `file://` URI. The counter resets on every launch (so photos get overwritten). The result is ignored and nothing is uploaded. | `TakePicture`, `onActivityResult` | `expo-image-picker` `launchCameraAsync` (system camera on Android/iOS, file/camera input on web) with a runtime permission flow. Photos are kept in app storage. Later it feeds the F9 "create listing" flow. | ⬜ |
+| F4 (#5) | **Take a photo**: overflow "Camera" launches the system camera and writes to public `Pictures/picFolder/N.jpg` via a `file://` URI. The counter resets on every launch (so photos get overwritten). The result is ignored and nothing is uploaded. | `TakePicture`, `onActivityResult` | `expo-image-picker` `launchCameraAsync` (system camera on Android/iOS, file/camera input on web) with a runtime permission flow. Photos are kept in app storage. Later it feeds the F9 "create listing" flow. | ✅ #5 (button placed on the feed in #8) |
 | F5 | **Identity detection**: scans `AccountManager` accounts for an email-shaped name and toasts "Loging in as …". Dead code that would read the phone number through `TelephonyManager`. | `onCreateView` | Removed: modern Android hides accounts, and phone-number access is restricted. Replaced by real sign-in (F6). | 🗑️ |
 | F6 (#10) | **Logon**: POSTs the hardcoded form `Id=1091&Email=someval1091@gmail.com` to Azure `/home/Logon`, ignores the response, and always toasts "Logged in". | `LogonTask`, `requestUrl` | Firebase Auth: **phone OTP first** (no SMS permission needed), Google second. A sign-in route gates the app, and the session persists across restarts. | ⬜ |
-| F7 (#6) | **Settings** menu item (no-op) | `menu_main.xml` | `settings` route: account/sign-out, theme, app version. Kept minimal. | ⬜ |
+| F7 (#6) | **Settings** menu item (no-op) | `menu_main.xml` | `settings` route: account/sign-out, data source, app version (theme follows the system). | ✅ #6 |
 | F8 | **Data models**: `Product(Description, Hashtag, Id, Image, PublisherId)`, `User(Id, Email)` | `DataProduct`, `DataUser` | TypeScript types + `zod` schemas that parse the legacy PascalCase JSON into camelCase domain objects (`src/domain/`) | ✅ scaffold |
 | F9 | *README-only, not implemented:* **manage classifieds** (create/edit/delete a listing with photo + description + hashtag) | README | New create-listing flow: F4 photo → form → upload to Firebase Storage | ⏸️ later (Q3) |
 | F10 | *README-only, not implemented:* **communication between friends** (friends graph, sharing, messaging) | README | Phone-number contact linking (WhatsApp-style, `expo-contacts`), then messaging | ⏸️ later (Q3) |
@@ -108,7 +108,8 @@ docs/REVIVAL_2026.md   # this file
 
 ### Phase 2: Port existing features (1:1 behaviour, done properly)
 - [x] F8 (done in the scaffold)
-- [ ] F1, F2, F3, F4, F6, F7
+- [x] F4 (#5), F7 (#6); F2 hook and list components (#3, #4)
+- [ ] F2 wiring + F3 (#8), F2c Firestore (#9), F1 brand (#7), F6 sign-in (#10)
 
 ### Phase 3: Complete the product vision
 - [ ] F9: Create/edit/delete listing with photo upload
@@ -138,6 +139,9 @@ docs/REVIVAL_2026.md   # this file
 | 2026-09-30 | Firebase project id `ymarq-35862` (Android, iOS and Web apps registered). Expo account `ymarq`. Vercel account connected. **Firebase Hosting not used**, since Vercel hosts the web app. | owner |
 | 2026-09-30 | Test targets: **Web first, then iOS** (Simulator, then a real iPhone). Android device testing waits until an Android phone is available; Android stays the release priority. | owner |
 | 2026-09-30 | Work is managed as GitHub Issues. "Agent-ready" issues are picked up by agents that open PRs; "pairing" issues are done together. | owner |
+| 2026-10-05 | Compared `YmarqOrg/YmarqApp` with this repo's legacy code: same root commit `6f517d8`, plus two trivial commits (camera menu label "Camera" → "Camera3", IDE files). **No newer version exists; the plan stands.** That repo contains only the Android client; the backend sources (#15) are still missing. | owner + Claude |
+| 2026-10-05 | Tracker statuses are updated once per wave (not in feature PRs) to avoid merge conflicts between parallel PRs. | Claude |
+| 2026-10-05 | Web production: https://ymarq-app.vercel.app (Vercel, deploys `master`). `master` protected by ruleset "master-safe" (PR + both CI checks + up to date). | owner |
 
 ---
 
@@ -214,10 +218,11 @@ flowchart LR
   classDef ready fill:#dff5e3,stroke:#0e8a16,color:#000
   classDef pairing fill:#dbe9fb,stroke:#1d76db,color:#000
   classDef later fill:#eeeeee,stroke:#999,color:#555
-  class nF2a ready
-  class nF2b ready
-  class nF4 ready
-  class nF7 ready
+  classDef done fill:#ffffff,stroke:#0e8a16,stroke-dasharray:4 2,color:#555
+  class nF2a done
+  class nF2b done
+  class nF4 done
+  class nF7 done
   class nF1 pairing
   class nF3 ready
   class nF2c pairing
@@ -238,10 +243,10 @@ flowchart LR
 | Wave | Issue | Type | Blocked by |
 |---|---|---|---|
 | 0 | ✅ #1 Expo scaffold · ✅ #2 CI | – | – |
-| 1 | #3 F2a: useProducts() data hook | agent-ready | – |
-| 1 | #4 F2b: Product list UI components | agent-ready | – |
-| 1 | #5 F4: Take a photo with the camera | agent-ready | – |
-| 1 | #6 F7: Settings screen | agent-ready | – |
+| 1 | ✅ #3 F2a: useProducts() data hook | agent-ready | – |
+| 1 | ✅ #4 F2b: Product list UI components | agent-ready | – |
+| 1 | ✅ #5 F4: Take a photo with the camera | agent-ready | – |
+| 1 | ✅ #6 F7: Settings screen | agent-ready | – |
 | 1 | #7 F1: Brand: app icon, splash and theme | pairing | – |
 | 2 | #8 F3: Feed screen: real data, refresh, camera button | agent-ready | #3, #4, #5 |
 | 2 | #9 F2c: Firestore product repository | pairing | – |

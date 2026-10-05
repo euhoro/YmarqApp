@@ -57,12 +57,14 @@ npm run build:web && npm run test:e2e   # production web build + browser smoke t
 
 ### Manual checklist (web)
 
-Run `npm run web` and check the app's current state:
+Run `npm run web` (or open the live build at https://ymarq-app.vercel.app) and check the app's current state:
 
 | # | Check | Expected today | Changes with |
 |---|---|---|---|
 | 1 | Open http://localhost:8081 | "Ymarq" header, feed placeholder | #8 (real feed with products) |
-| 2 | Click **Settings** | URL `/settings`, "Settings" header | #6 (settings content), #8 (header icon) |
+| 2 | Click **Settings** | URL `/settings`; shows signed-in user `1111111111`, data source `fake`, version `1.0.0` | #8 (header icon) |
+| 2b | Click **Sign out** | Goes to `/sign-in`; back to Settings shows "Not signed in" (fake, resets on reload) | #10 |
+| 2c | Open `/new-listing` | "New listing" header, "No photo" | #8 (camera button on the feed) |
 | 3 | Browser back | Returns to the feed | |
 | 4 | Open http://localhost:8081/sign-in | "Sign in" header | #10 (phone sign-in) |
 | 5 | Toggle your OS dark mode | Colors follow the system theme | #7 (brand colors) |
@@ -87,7 +89,7 @@ issue (spec) → branch → commits → PR (CI + preview) → review → squash-
 3. **Stay inside the issue's "Files in scope"**. Parallel issues are split so they don't touch the same files; going outside the list causes merge conflicts for others.
 4. **Commit** small, clear messages (`Add useProducts hook`). Run `npm run verify` before pushing.
 5. **Open a PR** (`gh pr create`). The template asks for `Closes #<n>`, manual test steps and the checklist.
-6. **CI must be green** (`verify` + `e2e-web`). Never merge a red PR. (GitHub can enforce this with branch protection, but only on a paid plan or a public repo; until then it's a team rule.)
+6. **CI must be green** (`verify` + `e2e-web`). The `master-safe` ruleset enforces this: PRs only, both checks passing, branch up to date with `master`.
 7. **Merge** with "Squash and merge", then delete the branch. The issue closes automatically.
 8. **Write the Summary** comment on the closed issue (template below).
 
@@ -120,7 +122,7 @@ Issues and comments are Markdown, so they can hold summaries. Our convention:
   **How to test:** …
   **Follow-ups:** #…  (or "none")
   ```
-- **When a wave finishes:** a short progress comment on the Roadmap (#22).
+- **When a wave finishes:** a short progress comment on the Roadmap (#22), and one PR that updates the statuses in `docs/REVIVAL_2026.md`. Feature PRs don't edit the tracker, so parallel PRs don't conflict.
 - **Decisions** go into the Decisions log in `docs/REVIVAL_2026.md` (versioned with the code), and the issue links to it.
 
 ### Things that break the build (and how to avoid them)

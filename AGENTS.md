@@ -1,8 +1,8 @@
 # Ymarq: rules for agents
 
 Ymarq is being rebuilt from a 2014 Android prototype. The plan, feature map, decisions and status live in
-[`docs/REVIVAL_2026.md`](docs/REVIVAL_2026.md). Read it before starting work, and update the status of the
-feature you change there in the same PR.
+[`docs/REVIVAL_2026.md`](docs/REVIVAL_2026.md). Read it before starting work. Don't edit its statuses in feature PRs: they are updated once per wave,
+so parallel PRs don't conflict.
 
 ## Project rules
 
