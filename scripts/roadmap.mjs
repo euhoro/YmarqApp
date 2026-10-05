@@ -77,7 +77,8 @@ const lists = sections.flatMap(([key, heading]) => {
     `### ${heading}`,
     ...items.map((issue) => {
       const waits = openBlockers(issue).map((dep) => `#${dep.number}`);
-      return `- [${issue.closed ? 'x' : ' '}] #${issue.number}${waits.length ? ` (waits for ${waits.join(', ')})` : ''}`;
+      const marks = `${has(issue, 'dod') ? ' ⭐' : ''}${has(issue, 'owner-task') ? ' 👤' : ''}`;
+      return `- [${issue.closed ? 'x' : ' '}] #${issue.number}${marks}${waits.length ? ` (waits for ${waits.join(', ')})` : ''}`;
     }),
     '',
   ];
@@ -89,6 +90,7 @@ const generated = [
   '',
   '## Dependency graph',
   'Arrow = "must be done before". Green = ready, blue = needs a human, red = blocked, orange = needs a decision, grey = later, dashed = done.',
+  'In the lists: ⭐ = needed for the Definition of Done, 👤 = owner task.',
   '',
   ...graph,
   '',
