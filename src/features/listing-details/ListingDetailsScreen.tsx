@@ -1,16 +1,7 @@
 import { Image } from 'expo-image';
-import { Stack, useLocalSearchParams } from 'expo-router';
+import { router, Stack, useLocalSearchParams } from 'expo-router';
 import { ScrollView, StyleSheet, View } from 'react-native';
-import {
-  ActivityIndicator,
-  Avatar,
-  Button,
-  Chip,
-  HelperText,
-  Icon,
-  Text,
-  useTheme,
-} from 'react-native-paper';
+import { ActivityIndicator, Avatar, Button, Chip, Icon, Text, useTheme } from 'react-native-paper';
 
 import { formatPrice } from '@/domain/product';
 import { useCurrentUser } from '@/features/auth/useCurrentUser';
@@ -92,15 +83,15 @@ export function ListingDetailsScreen() {
         ) : null}
 
         {!isOwn && listing.publisherId ? (
-          <>
-            {/* Chat (#45) adds /chats/new; enabled there. */}
-            <Button mode="contained" icon="message-text-outline" disabled>
-              Message {seller}
-            </Button>
-            <HelperText type="info" visible>
-              Chat is coming soon.
-            </HelperText>
-          </>
+          <Button
+            mode="contained"
+            icon="message-text-outline"
+            onPress={() =>
+              router.push({ pathname: '/chats/new', params: { productId: listing.id } })
+            }
+          >
+            Message {seller}
+          </Button>
         ) : null}
       </View>
     </ScrollView>

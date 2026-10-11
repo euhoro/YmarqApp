@@ -68,3 +68,27 @@ test('tapping a listing opens its details with the seller', async ({ page }) => 
   await expect(page.getByText('Sold by')).toBeVisible();
   await expect(page.getByText('Dana', { exact: true })).toBeVisible();
 });
+
+test('message the seller about a listing, then find the chat in the inbox', async ({ page }) => {
+  await page.goto('/');
+  await page.getByText('MacBook Air 13", like new').click();
+  await page.getByRole('button', { name: 'Message Dana' }).click();
+
+  await expect(page).toHaveURL(/\/chats\/(?!new)[^/?]+$/);
+  await page.getByLabel('Message text').fill('Is it still available?');
+  await page.getByLabel('Send').click();
+  await expect(page.getByText('Is it still available?')).toBeVisible();
+  // The demo seller answers a moment later; polling (every 5 s) picks it up.
+  await expect(page.getByText("Hi! Yes, it's still available.", { exact: false })).toBeVisible({
+    timeout: 10_000,
+  });
+
+  // Chats are in memory, so go back in the app instead of reloading it.
+  await page.goBack();
+  await expect(page).toHaveURL(/\/listing\//);
+  await page.goBack();
+  await expect(page).toHaveURL(/\/$/);
+  await page.getByLabel('Messages').click();
+  await expect(page).toHaveURL(/\/chats$/);
+  await expect(page.getByText('Dana · MacBook Air 13", like new')).toBeVisible();
+});
