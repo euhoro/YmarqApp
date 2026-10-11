@@ -40,3 +40,13 @@ describe('createStores', () => {
     expect(() => createStores('postgres')).toThrow(/#32/);
   });
 });
+
+describe('Vercel entry point (src/index.ts)', () => {
+  it('serves the same API', async () => {
+    const { default: entry } = await import('../../index.js');
+    const response = await entry.request('/health');
+
+    expect(response.status).toBe(200);
+    expect(await response.json()).toEqual({ ok: true });
+  });
+});
