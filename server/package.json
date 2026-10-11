@@ -11,7 +11,9 @@
     "test": "vitest run",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "verify": "npm run lint && npm run typecheck && npm run format:check && npm test"
+    "verify": "npm run lint && npm run typecheck && npm run format:check && npm test",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate"
   },
   "dependencies": {
     "@electric-sql/pglite": "^0.5.8",

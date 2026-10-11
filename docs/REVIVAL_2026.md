@@ -163,7 +163,7 @@ docs/REVIVAL_2026.md   # this file
 | 2026-10-05 | D-A revised: **Firebase for phone sign-in only**. Firestore and Firebase Hosting dropped. | owner |
 | 2026-10-05 | Database: **Postgres**, behind a repository interface in the API so DynamoDB stays possible. | owner |
 | 2026-10-05 | Keep the **fake data source** until the API exists. AWS deferred. Stack kept lean: **option A**, a TypeScript API on Vercel Functions + Neon Postgres + Vercel Blob + Firebase phone sign-in (see `docs/STACK.md`). Vercel Pro ($20/month) at commercial launch. | owner |
-| 2026-10-05 | API framework: **Hono** (API-only, runs natively on Vercel), in `api/` in this repo. Not Next.js: the Expo app already is the website. | owner |
+| 2026-10-05 | API framework: **Hono** (API-only, runs natively on Vercel), in `server/` in this repo (renamed from `api/` on 2026-10-11 because Vercel treats a top-level `api/` folder as functions). Not Next.js: the Expo app already is the website. | owner |
 | 2026-10-05 | Order: **UI first on mock data** (fake repositories), then build the new API (the legacy server had no real logic to port). | owner |
 | 2026-10-05 | **Definition of Done for launch** agreed (section 0): register, log in, sell, buy/search, chat, notifications, all against the real server. Issues on that path carry the `dod` label; #54 is the final acceptance test. | owner |
 | 2026-10-05 | Listings get **price, currency, category, location** (optional; legacy wire format extended with `Price`, `Currency`, `Category`, `Location`). Pre-filled by **basic rule-based extraction** from the free-text description; a smarter extraction service later (#52). | owner |

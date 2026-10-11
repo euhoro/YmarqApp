@@ -40,19 +40,21 @@ The dev server reloads on every save. Press `Ctrl+C` in the terminal to stop it.
 
 **Switching data sources:** set `EXPO_PUBLIC_DATA_SOURCE` in `.env.local` to `fake` (default), `firestore` (after #9) or `legacy` (with `EXPO_PUBLIC_LEGACY_API_URL`), then restart `npm run web`.
 
-## 2b. Run the API (`api/`)
+## 2b. Run the API (`server/`)
 
-The backend is a separate Node package in `api/` (Hono, TypeScript), deployed to Vercel as its own project (#31).
+The backend is a separate Node package in `server/` (Hono, TypeScript), deployed to Vercel as its own project (#31).
 
 ```bash
-cd api
+cd server
 npm install
 npm run dev        # http://localhost:3001/health → {"ok":true}
 npm run verify     # lint, typecheck, format check, Vitest
 ```
 
-- Storage is chosen with `STORE` (`memory` by default; `postgres` from #32). See `api/.env.example`.
-- Every store implements `ProductStore` and must pass the shared contract tests in `api/src/stores/__tests__/productStoreContract.ts`, which is how Postgres (and DynamoDB later) stay interchangeable.
+- Storage is chosen with `STORE`: `memory` (default) or `postgres` (needs `DATABASE_URL`, set by the Vercel Neon integration). See `server/.env.example`.
+- **Database schema** lives in `server/src/stores/postgres/schema.ts`. After changing it: `npm run db:generate` (writes a SQL migration to `server/drizzle/`, commit it). `npm run db:migrate` applies migrations to `DATABASE_URL`.
+- Tests run the real migrations against **PGlite** (Postgres in-process), so no database server is needed locally or in CI.
+- Every store implements `ProductStore` and must pass the shared contract tests in `server/src/stores/__tests__/productStoreContract.ts`, which is how Postgres (and DynamoDB later) stay interchangeable.
 - CI runs the API checks in a separate `api` job.
 
 
