@@ -6,9 +6,6 @@ import { Hono } from 'hono';
 import { createApp } from './createApp.js';
 import { createStores } from './stores/index.js';
 
-const app = new Hono().route(
-  '/',
-  createApp({ stores: createStores(), corsOrigins: process.env.CORS_ORIGINS }),
-);
+const app: Hono = createApp({ stores: createStores(), corsOrigins: process.env.CORS_ORIGINS });
 
 export default app;

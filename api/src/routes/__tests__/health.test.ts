@@ -48,5 +48,6 @@ describe('Vercel entry point (src/index.ts)', () => {
 
     expect(response.status).toBe(200);
     expect(await response.json()).toEqual({ ok: true });
+    expect(await (await entry.request('/nope')).json()).toEqual({ error: 'Not found' });
   });
 });
