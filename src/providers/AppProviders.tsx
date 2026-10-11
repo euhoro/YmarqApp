@@ -11,13 +11,16 @@ import { darkTheme, lightTheme } from '@/theme/theme';
 /** Everything the app runs inside: services, data cache, Paper and navigation themes. Tests pass fake `services`. */
 export function AppProviders({
   services,
+  queryClient: providedQueryClient,
   children,
 }: {
   services?: Partial<Services>;
+  /** Tests pass one with `retry: false`; the app retries failed requests. */
+  queryClient?: QueryClient;
   children: ReactNode;
 }) {
   const colorScheme = useColorScheme();
-  const [queryClient] = useState(() => new QueryClient());
+  const [queryClient] = useState(() => providedQueryClient ?? new QueryClient());
   const paperTheme = colorScheme === 'dark' ? darkTheme : lightTheme;
   // Headers and screen backgrounds come from React Navigation's theme; derive it from Paper's.
   const baseNavigationTheme = colorScheme === 'dark' ? DarkTheme : DefaultTheme;
