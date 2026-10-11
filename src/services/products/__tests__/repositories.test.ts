@@ -87,6 +87,22 @@ describe('LegacyApiProductRepository', () => {
     ]);
   });
 
+  it('sends the bearer token when signed in', async () => {
+    const fetchFn = jest.fn().mockResolvedValue(jsonResponse([]));
+    const repo = new LegacyApiProductRepository(
+      'https://legacy.example.com',
+      fetchFn,
+      async () => 'dev:1111111111',
+    );
+
+    await repo.listProducts('1111111111');
+
+    expect(fetchFn).toHaveBeenCalledWith(
+      'https://legacy.example.com/photos/GetProducts/1111111111',
+      { headers: { Authorization: 'Bearer dev:1111111111' } },
+    );
+  });
+
   it('throws on HTTP errors', async () => {
     const fetchFn = jest.fn().mockResolvedValue(jsonResponse(null, 500));
     const repo = new LegacyApiProductRepository('https://legacy.example.com', fetchFn);
@@ -100,7 +116,7 @@ describe('createProductRepository', () => {
     expect(createProductRepository('fake')).toBeInstanceOf(FakeProductRepository);
   });
 
-  it('fails clearly for the not-yet-implemented Firestore source', () => {
-    expect(() => createProductRepository('firestore')).toThrow(/F2c/);
+  it('needs EXPO_PUBLIC_API_URL for the api source', () => {
+    expect(() => createProductRepository('api')).toThrow(/EXPO_PUBLIC_API_URL/);
   });
 });

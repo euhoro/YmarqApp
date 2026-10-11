@@ -38,7 +38,7 @@ The feed can read from three sources, chosen by `EXPO_PUBLIC_DATA_SOURCE` in `.e
 | Value | Source |
 |---|---|
 | `fake` (default) | Built-in sample products |
-| `firestore` | Firebase project `ymarq-35862` (in progress) |
+| `api` | The Ymarq server (`server/`) at `EXPO_PUBLIC_API_URL`, signed in with the user's token |
 | `legacy` | The original backend's `GET /photos/GetProducts/{userCode}` at `EXPO_PUBLIC_LEGACY_API_URL` |
 
 All three use the original data model (`Id`, `Description`, `Hashtag`, `Image`, `PublisherId`).

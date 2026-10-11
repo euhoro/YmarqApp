@@ -38,7 +38,9 @@ The dev server reloads on every save. Press `Ctrl+C` in the terminal to stop it.
 
 **Starting signed out:** set `EXPO_PUBLIC_FAKE_AUTH_SIGNED_IN=false` in `.env.local` to open the app on the sign-in screen (the fake auth accepts any mobile number with code `123456`).
 
-**Switching data sources:** set `EXPO_PUBLIC_DATA_SOURCE` in `.env.local` to `fake` (default), `firestore` (after #9) or `legacy` (with `EXPO_PUBLIC_LEGACY_API_URL`), then restart `npm run web`.
+**Switching data sources:** set `EXPO_PUBLIC_DATA_SOURCE` in `.env.local` to `fake` (default), `api` (with `EXPO_PUBLIC_API_URL`) or `legacy` (with `EXPO_PUBLIC_LEGACY_API_URL`), then restart `npm run web`.
+
+**App + local server, end to end:** in one terminal `cd server && AUTH_MODE=dev npm run dev`; in `.env.local` set `EXPO_PUBLIC_DATA_SOURCE=api` and `EXPO_PUBLIC_API_URL=http://localhost:3001`; then `npm run web`. The fake sign-in sends `dev:<userId>` tokens, which the server accepts only in `AUTH_MODE=dev` (never in production).
 
 ## 2b. Run the API (`server/`)
 

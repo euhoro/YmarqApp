@@ -15,7 +15,8 @@ export interface Services {
 /** The default services, with any `overrides` used instead (and by the services built on them). */
 export function createServices(overrides: Partial<Services> = {}): Services {
   const auth = overrides.auth ?? createAuthService();
-  const products = overrides.products ?? createProductRepository();
+  const products =
+    overrides.products ?? createProductRepository(undefined, () => auth.getIdToken());
   return {
     auth,
     products,

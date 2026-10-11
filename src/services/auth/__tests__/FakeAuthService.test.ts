@@ -18,6 +18,14 @@ describe('FakeAuthService', () => {
     expect(listener).toHaveBeenLastCalledWith(user);
   });
 
+  it('gives a dev token for the API while signed in', async () => {
+    const auth = new FakeAuthService();
+    expect(await auth.getIdToken()).toBe('dev:1111111111');
+
+    await auth.signOut();
+    expect(await auth.getIdToken()).toBeNull();
+  });
+
   it('signs out', async () => {
     const auth = new FakeAuthService();
     const listener = jest.fn();

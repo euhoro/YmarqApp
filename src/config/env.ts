@@ -4,7 +4,7 @@
  * See `.env.example`.
  */
 
-export const DATA_SOURCES = ['fake', 'firestore', 'legacy'] as const;
+export const DATA_SOURCES = ['fake', 'api', 'legacy'] as const;
 export type DataSource = (typeof DATA_SOURCES)[number];
 
 export function getDataSource(value = process.env.EXPO_PUBLIC_DATA_SOURCE): DataSource {
@@ -13,6 +13,13 @@ export function getDataSource(value = process.env.EXPO_PUBLIC_DATA_SOURCE): Data
   throw new Error(
     `Unknown EXPO_PUBLIC_DATA_SOURCE "${value}". Expected one of: ${DATA_SOURCES.join(', ')}.`,
   );
+}
+
+export function getApiUrl(value = process.env.EXPO_PUBLIC_API_URL): string {
+  if (!value) {
+    throw new Error('EXPO_PUBLIC_API_URL must be set when EXPO_PUBLIC_DATA_SOURCE=api.');
+  }
+  return value.replace(/\/+$/, '');
 }
 
 export function getLegacyApiUrl(value = process.env.EXPO_PUBLIC_LEGACY_API_URL): string {
