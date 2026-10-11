@@ -5,11 +5,13 @@ import { Button, Divider, List } from 'react-native-paper';
 
 import { getDataSource } from '@/config/env';
 import { useCurrentUser } from '@/features/auth/useCurrentUser';
+import { useProfile } from '@/features/profile/useProfile';
 import { useServices } from '@/services/ServicesProvider';
 
 export function SettingsScreen() {
   const { auth } = useServices();
   const user = useCurrentUser();
+  const profile = useProfile();
 
   const signOut = async () => {
     await auth.signOut();
@@ -20,6 +22,13 @@ export function SettingsScreen() {
     <ScrollView contentContainerStyle={styles.content}>
       <List.Section>
         <List.Subheader>Account</List.Subheader>
+        {profile.data ? (
+          <List.Item
+            title="Name"
+            description={profile.data.displayName}
+            left={(props) => <List.Icon {...props} icon="badge-account" />}
+          />
+        ) : null}
         <List.Item
           title="Signed in as"
           description={user ? (user.phoneNumber ?? user.id) : 'Not signed in'}

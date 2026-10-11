@@ -3,6 +3,7 @@ import { fireEvent, renderRouter, screen, waitFor } from 'expo-router/testing-li
 import AppLayout from '@/app/(app)/_layout';
 import FeedScreen from '@/app/(app)/index';
 import NewListingScreen from '@/app/(app)/new-listing';
+import RegisterRoute from '@/app/(app)/register';
 import SettingsScreen from '@/app/(app)/settings';
 import SignInRoute from '@/app/sign-in';
 import { AppProviders } from '@/providers/AppProviders';
@@ -24,6 +25,7 @@ function renderApp(auth: FakeAuthService, initialUrl = '/') {
       '(app)/index': FeedScreen,
       '(app)/settings': SettingsScreen,
       '(app)/new-listing': NewListingScreen,
+      '(app)/register': RegisterRoute,
       'sign-in': SignInRoute,
     },
     { initialUrl },
@@ -73,7 +75,7 @@ describe('sign-in and auth gate', () => {
     expect(screen.getByLabelText('Phone number')).toBeTruthy();
   });
 
-  it('signs in with the right code and lands on the feed', async () => {
+  it('signs in with the right code; a new user picks a name, then lands on the feed', async () => {
     const auth = new FakeAuthService(null);
     const app = renderApp(auth);
     await app;
@@ -83,9 +85,14 @@ describe('sign-in and auth gate', () => {
     await fireEvent.changeText(await screen.findByLabelText('Code'), FAKE_SMS_CODE);
     await fireEvent.press(screen.getByRole('button', { name: 'Verify' }));
 
+    await waitFor(() => expect(app.getPathname()).toBe('/register'));
+    expect(auth.getCurrentUser()?.phoneNumber).toBe('+972501234567');
+
+    await fireEvent.changeText(await screen.findByLabelText('Your name'), 'Dana');
+    await fireEvent.press(screen.getByRole('button', { name: 'Continue' }));
+
     await waitFor(() => expect(app.getPathname()).toBe('/'));
     expect(await screen.findByText('Suzuki Swift')).toBeTruthy();
-    expect(auth.getCurrentUser()?.phoneNumber).toBe('+972501234567');
   });
 
   it('keeps signed-in users out of sign-in', async () => {
