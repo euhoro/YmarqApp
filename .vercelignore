@@ -1,0 +1,3 @@
+# The web project must not deploy api/ (Vercel treats a top-level api/ folder as serverless functions).
+# The API is its own Vercel project with root directory api/.
+/api
