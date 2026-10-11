@@ -5,6 +5,9 @@ import { logger } from 'hono/logger';
 
 import type { Stores } from './stores/index.js';
 
+/** Hono environment of the API: request-scoped variables available via `c.get(...)`. */
+export type AppEnv = { Variables: { stores: Stores } };
+
 export interface AppDeps {
   stores: Stores;
   corsOrigins?: string;
@@ -12,7 +15,7 @@ export interface AppDeps {
 
 /** Builds the API. Tests pass in-memory stores; `index.ts` wires the real ones. */
 export function createApp({ stores, corsOrigins = '*' }: AppDeps) {
-  const app = new Hono<{ Variables: { stores: Stores } }>();
+  const app = new Hono<AppEnv>();
 
   app.use(logger());
   app.use(
