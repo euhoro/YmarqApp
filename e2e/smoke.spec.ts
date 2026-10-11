@@ -49,3 +49,13 @@ test('sell: one sentence fills in the details and the listing appears first', as
   await expect(page.getByText('Wooden desk, 450 ₪, Haifa')).toBeVisible();
   await expect(page.getByText('₪450 · Haifa')).toBeVisible();
 });
+
+test("search finds another user's listing by a word in it", async ({ page }) => {
+  await page.goto('/');
+  await expect(page.getByText('MacBook Air 13", like new')).toBeVisible();
+
+  await page.getByLabel('Search listings').fill('swift');
+
+  await expect(page.getByText('Suzuki Swift')).toBeVisible();
+  await expect(page.getByText('MacBook Air 13", like new')).toBeHidden();
+});
