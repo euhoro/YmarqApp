@@ -36,6 +36,11 @@ export class FakeAuthService implements AuthService {
     };
   }
 
+  /** Accepted by the API only when it runs with AUTH_MODE=dev (local or preview), never in production. */
+  async getIdToken(): Promise<string | null> {
+    return this.user ? `dev:${this.user.id}` : null;
+  }
+
   async signOut(): Promise<void> {
     this.setUser(null);
   }

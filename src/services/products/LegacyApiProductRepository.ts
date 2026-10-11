@@ -10,12 +10,17 @@ import type { ProductRepository } from './ProductRepository';
 export class LegacyApiProductRepository implements ProductRepository {
   constructor(
     private readonly baseUrl: string,
-    private readonly fetchFn: typeof fetch = fetch,
+    // Wrapped: browsers throw "Illegal invocation" when fetch is called as a method of another object.
+    private readonly fetchFn: typeof fetch = (input, init) => fetch(input, init),
+    private readonly getToken: () => Promise<string | null> = async () => null,
   ) {}
 
   async listProducts(userId: string): Promise<Product[]> {
     const url = `${this.baseUrl}/photos/GetProducts/${encodeURIComponent(userId)}`;
-    const response = await this.fetchFn(url);
+    const token = await this.getToken();
+    const response = token
+      ? await this.fetchFn(url, { headers: { Authorization: `Bearer ${token}` } })
+      : await this.fetchFn(url);
     if (!response.ok) {
       throw new Error(`Legacy API ${url} failed with HTTP ${response.status}`);
     }

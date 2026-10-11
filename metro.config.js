@@ -6,6 +6,11 @@ const config = getDefaultConfig(__dirname);
 
 // server/ is a separate Node package (the Hono server); keep it out of the app bundle.
 const serverDir = path.resolve(__dirname, 'server').replace(/[/\\]/g, '[/\\\\]');
-config.resolver.blockList = [new RegExp(`^${serverDir}[/\\\\].*`)];
+// .claude/ holds agent worktrees (full copies of the repo); never bundle them either.
+const claudeDir = path.resolve(__dirname, '.claude').replace(/[/\\]/g, '[/\\\\]');
+config.resolver.blockList = [
+  new RegExp(`^${serverDir}[/\\\\].*`),
+  new RegExp(`^${claudeDir}[/\\\\].*`),
+];
 
 module.exports = config;

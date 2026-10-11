@@ -11,9 +11,10 @@ export interface Services {
 }
 
 export function createServices(): Services {
+  const auth = createAuthService();
   return {
-    auth: createAuthService(),
-    products: createProductRepository(),
+    auth,
+    products: createProductRepository(undefined, () => auth.getIdToken()),
     profiles: createProfileRepository(),
   };
 }

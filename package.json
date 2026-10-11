@@ -60,7 +60,11 @@
     "testPathIgnorePatterns": [
       "/node_modules/",
       "/e2e/",
-      "<rootDir>/server/"
+      "<rootDir>/server/",
+      "<rootDir>/.claude/"
+    ],
+    "modulePathIgnorePatterns": [
+      "<rootDir>/.claude/"
     ]
   }
 }
