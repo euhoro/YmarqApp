@@ -25,6 +25,9 @@ export default function AppLayout() {
         <Stack.Screen name="settings" options={{ title: 'Settings' }} />
         <Stack.Screen name="new-listing" options={{ title: 'New listing' }} />
         <Stack.Screen name="listing/[id]" options={{ title: 'Listing' }} />
+        <Stack.Screen name="chats/index" options={{ title: 'Messages' }} />
+        <Stack.Screen name="chats/[id]" options={{ title: 'Chat' }} />
+        <Stack.Screen name="chats/new" options={{ title: 'Chat' }} />
       </Stack.Protected>
       <Stack.Protected guard={!hasProfile}>
         <Stack.Screen name="register" options={{ title: 'Welcome' }} />
