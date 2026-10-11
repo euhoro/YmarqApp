@@ -84,6 +84,7 @@ Run `npm run web` (or open the live build at https://ymarq-app.vercel.app) and c
 | 2c | Camera button (or open `/new-listing`) → type `Selling my Suzuki Swift 2012, 25,000 ₪, Tel Aviv` | Price 25000 ₪, category Vehicles, location Tel Aviv filled in; editing a field keeps your value | #52 (smarter extraction) |
 | 2d | **Publish** | Back on the feed, the new listing first with "₪25,000 · Tel Aviv" (in memory until reload) | #36 (saved on the server) |
 | 3 | Browser back | Returns to the feed | |
+| 3b | Type `swift` (or `#vinyl`, `haifa`) in **Search listings** | Only matching listings; `zzz` shows "No results for “zzz”"; clearing the box brings the feed back | #34 (search on the server) |
 | 4 | Settings → **Sign out** | Goes to **Sign in**; any other URL also lands there while signed out | |
 | 4b | Sign in: +972, `050-123-4567`, **Send code**, code `000000` | "Wrong code" error | #10 (real SMS) |
 | 4c | Enter code `123456` | First time for this number: **"What's your name?"** → type a name → **Continue** → feed; Settings shows the name and `+972501234567` | #48 (names saved on the server) |

@@ -12,6 +12,8 @@ export interface ProductListProps {
   onRetry(): void;
   refreshing: boolean;
   onRefresh(): void;
+  /** Shown when there are no products (default "No products yet"). */
+  emptyText?: string;
   /** Extra list padding, e.g. room for a floating button over the last card. */
   contentContainerStyle?: StyleProp<ViewStyle>;
 }
@@ -24,6 +26,7 @@ export function ProductList({
   refreshing,
   onRefresh,
   contentContainerStyle,
+  emptyText = 'No products yet',
 }: ProductListProps) {
   if (isLoading) {
     return (
@@ -54,7 +57,7 @@ export function ProductList({
       contentContainerStyle={[styles.content, contentContainerStyle]}
       ListEmptyComponent={
         <View style={styles.centered}>
-          <Text variant="titleMedium">No products yet</Text>
+          <Text variant="titleMedium">{emptyText}</Text>
         </View>
       }
       // Passing these to FlatList (rather than a custom RefreshControl) gives pull-to-refresh on native.
