@@ -53,6 +53,7 @@ npm run verify     # lint, typecheck, format check, Vitest
 
 - Storage is chosen with `STORE`: `memory` (default) or `postgres` (needs `DATABASE_URL`, set by the Vercel Neon integration). See `server/.env.example`.
 - **Database schema** lives in `server/src/stores/postgres/schema.ts`. After changing it: `npm run db:generate` (writes a SQL migration to `server/drizzle/`, commit it). `npm run db:migrate` applies migrations to `DATABASE_URL`.
+- **Sign-in:** every `/v1/*` route needs `Authorization: Bearer <token>`. `AUTH_MODE=firebase` (default, and the only mode allowed in production) accepts real Firebase ID tokens; `AUTH_MODE=dev` also accepts `Bearer dev:<userId>` for local work, e.g. `curl -H 'Authorization: Bearer dev:alice' localhost:3001/v1/whoami`.
 - Tests run the real migrations against **PGlite** (Postgres in-process), so no database server is needed locally or in CI.
 - Every store implements `ProductStore` and must pass the shared contract tests in `server/src/stores/__tests__/productStoreContract.ts`, which is how Postgres (and DynamoDB later) stay interchangeable.
 - CI runs the API checks in a separate `api` job.
