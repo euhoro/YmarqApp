@@ -60,7 +60,7 @@
     "testPathIgnorePatterns": [
       "/node_modules/",
       "/e2e/",
-      "<rootDir>/api/"
+      "<rootDir>/server/"
     ]
   }
 }

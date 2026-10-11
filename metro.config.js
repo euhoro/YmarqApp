@@ -4,8 +4,8 @@ const { getDefaultConfig } = require('expo/metro-config');
 
 const config = getDefaultConfig(__dirname);
 
-// api/ is a separate Node package (the Hono server); keep it out of the app bundle.
-const apiDir = path.resolve(__dirname, 'api').replace(/[/\\]/g, '[/\\\\]');
-config.resolver.blockList = [new RegExp(`^${apiDir}[/\\\\].*`)];
+// server/ is a separate Node package (the Hono server); keep it out of the app bundle.
+const serverDir = path.resolve(__dirname, 'server').replace(/[/\\]/g, '[/\\\\]');
+config.resolver.blockList = [new RegExp(`^${serverDir}[/\\\\].*`)];
 
 module.exports = config;
