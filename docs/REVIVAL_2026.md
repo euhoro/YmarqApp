@@ -168,6 +168,7 @@ docs/REVIVAL_2026.md   # this file
 | 2026-10-05 | **Definition of Done for launch** agreed (section 0): register, log in, sell, buy/search, chat, notifications, all against the real server. Issues on that path carry the `dod` label; #54 is the final acceptance test. | owner |
 | 2026-10-05 | Listings get **price, currency, category, location** (optional; legacy wire format extended with `Price`, `Currency`, `Category`, `Location`). Pre-filled by **basic rule-based extraction** from the free-text description; a smarter extraction service later (#52). | owner |
 | 2026-10-05 | Messaging moved into the launch scope (#45, #49); contacts linking (#21) is after launch. Owner tasks get the `owner-task` label and are assigned to the owner. | owner |
+| 2026-10-11 | Backend folder renamed `api/` → `server/` (Vercel treats a top-level `api/` as web functions). API production on Neon Postgres (`STORE=postgres`, migrations at build). Merge rules: option A (no "up to date" requirement, auto-merge allowed). | owner + Claude |
 | 2026-10-05 | Tracker statuses are updated once per wave (not in feature PRs) to avoid merge conflicts between parallel PRs. | Claude |
 | 2026-10-05 | Web production: https://ymarq-app.vercel.app (Vercel, deploys `master`). `master` protected by ruleset "master-safe" (PR + both CI checks + up to date). | owner |
 
@@ -193,6 +194,30 @@ docs/REVIVAL_2026.md   # this file
 - Issues communicate through interfaces that already exist on `master` (e.g., the feed UI uses the `useProducts()` contract; the data issue implements `ProductRepository`).
 - No agent-ready issue touches secrets, the Firebase/Expo/Vercel consoles, signing, or the stores.
 
+### Status 2026-10-11 (end of wave 2) and how to resume
+
+**Definition of Done progress** (✅ done on mock data or server, 🟨 partly, ⬜ not started):
+
+| DoD | State |
+|---|---|
+| 0 register | 🟨 phone screen + name step done (#37, #42) on fake auth; real SMS needs #10 (+ owner #39) |
+| 1 log in | 🟨 same as above |
+| 2 sell | 🟨 sell flow with extraction (#38); server endpoints live (#34); photo upload #35 |
+| 3 buy / search | ✅ search + details (#43, #44) in the app; server search `?q=` live (#34) |
+| 4 chat | 🟨 app chat on a fake (#45); server chat #49 |
+| 5 notifications | ⬜ #46, #47, #50, #51 |
+| 6 real server | 🟨 server live on Vercel + Neon (#30–#34), app `api` source (#36); production app still uses `fake` until #10 + #53 |
+
+**Live:** web https://ymarq-app.vercel.app (fake data) · API https://ymarq-app-api.vercel.app (Postgres, Firebase tokens only).
+
+**To resume (next session or agent):** read `AGENTS.md` and this file; `gh pr list`; `npm run roadmap` (🟢 = ready now). Suggested order:
+1. **#10** Firebase phone sign-in on web (pairing: needs the owner's Firebase console; unlocks real tokens for the API).
+2. **#48** profiles and **#49** chat on the server (agent-ready, independent; good to run in parallel).
+3. **#46** saved searches (app), **#50** matching (server); then **#12**/**#47**/**#51** push notifications once the owner has done **#40** (Xcode + Expo login).
+4. **#35** photo uploads to Blob, then **#53** (production on the API, no mocks).
+
+Gotchas already solved (details in the developer guide): the backend folder must be `server/`, not `api/`; rebuild with `--clear` after changing `EXPO_PUBLIC_*`; call `fetch` unbound; agent worktrees live in `.claude/` and are ignored by all tooling.
+
 ### Issues and dependency graph
 
 The live view is the pinned [Roadmap epic #22](https://github.com/euhoro/YmarqApp/issues/22): every issue is its sub-issue, dependencies use GitHub's native *Blocked by* links, and the dependency graph plus "ready now / blocked / done" lists are **generated from GitHub** by `npm run roadmap -- --write` (`scripts/roadmap.mjs`). Run it after adding issues or changing dependencies.
@@ -201,7 +226,7 @@ Issue groups (2026-10-05). ⭐ = on the Definition of Done path (`dod` label), �
 
 | Group | Issues |
 |---|---|
-| Done | #3 #4 #5 #6 #8 (feed), #11 (Vercel), #15 (legacy server reviewed); #9 Firestore replaced |
+| Done | #3–#8, #11, #15, #30–#34, #36–#38, #42–#45; #9 Firestore replaced |
 | UI on mock data (now) | ⭐ #37 sign-in → ⭐ #42 name; ⭐ #38 sell → ⭐ #43 details + ⭐ #44 search → ⭐ #45 chat, ⭐ #46 saved searches; #7 brand |
 | Backend: Hono API | ⭐ #30 skeleton → ⭐ #32 Postgres, ⭐ #33 tokens → ⭐ #34 products + search, ⭐ #48 profiles, ⭐ #49 chat → ⭐ #50 matching → ⭐ #51 push; ⭐ #35 photos; ⭐ #36 app connects |
 | Sign-in, real | ⭐ #10 Firebase web → ⭐ #13 phones; #14 Google |
