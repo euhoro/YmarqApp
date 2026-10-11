@@ -164,6 +164,6 @@ Issues and comments are Markdown, so they can hold summaries. Our convention:
 |---|---|
 | Port 8081 already in use | Another dev server is running; stop it or run `npx expo start --web --port 8082` |
 | Strange bundler errors after pulling | `npx expo start --web --clear` |
-| `npx expo-doctor` reports version mismatches | `npx expo install --fix` |
+| `npx expo-doctor` reports version mismatches | `npx expo install --fix` in a PR. CI skips this check on PRs (so `master` can't turn red on the day Expo ships a patch); the weekly **Expo updates check** workflow opens an issue instead |
 | e2e tests can't find a browser | `npx playwright install chromium` |
 | Formatting check fails in CI | `npm run format`, commit, push |
