@@ -24,6 +24,7 @@ export default function AppLayout() {
         <Stack.Screen name="index" options={{ title: 'Ymarq' }} />
         <Stack.Screen name="settings" options={{ title: 'Settings' }} />
         <Stack.Screen name="new-listing" options={{ title: 'New listing' }} />
+        <Stack.Screen name="listing/[id]" options={{ title: 'Listing' }} />
       </Stack.Protected>
       <Stack.Protected guard={!hasProfile}>
         <Stack.Screen name="register" options={{ title: 'Welcome' }} />

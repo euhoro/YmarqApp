@@ -2,6 +2,7 @@ import { fireEvent, renderRouter, screen, waitFor } from 'expo-router/testing-li
 
 import AppLayout from '@/app/(app)/_layout';
 import FeedScreen from '@/app/(app)/index';
+import ListingRoute from '@/app/(app)/listing/[id]';
 import NewListingScreen from '@/app/(app)/new-listing';
 import RegisterRoute from '@/app/(app)/register';
 import SettingsScreen from '@/app/(app)/settings';
@@ -19,6 +20,7 @@ function renderApp(profiles: FakeProfileRepository, initialUrl = '/') {
       '(app)/index': FeedScreen,
       '(app)/settings': SettingsScreen,
       '(app)/new-listing': NewListingScreen,
+      '(app)/listing/[id]': ListingRoute,
       '(app)/register': RegisterRoute,
     },
     {
