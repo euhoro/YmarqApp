@@ -1,4 +1,5 @@
 import { Image } from 'expo-image';
+import { router } from 'expo-router';
 import { StyleSheet, View } from 'react-native';
 import { Card, Icon, useTheme } from 'react-native-paper';
 
@@ -8,7 +9,12 @@ export function ProductCard({ product }: { product: Product }) {
   const theme = useTheme();
 
   return (
-    <Card testID={`product-card-${product.id}`}>
+    <Card
+      testID={`product-card-${product.id}`}
+      accessibilityRole="button"
+      accessibilityHint="Opens the listing"
+      onPress={() => router.push({ pathname: '/listing/[id]', params: { id: product.id } })}
+    >
       {/* Clip the image to the card's rounded corners without breaking the Card's shadow. */}
       <View style={[styles.clip, { borderRadius: theme.roundness * 3 }]}>
         {product.imageUrl ? (

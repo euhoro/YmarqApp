@@ -2,6 +2,7 @@ import { renderRouter, screen, waitFor } from 'expo-router/testing-library';
 
 import AppLayout from '@/app/(app)/_layout';
 import FeedScreen from '@/app/(app)/index';
+import ListingRoute from '@/app/(app)/listing/[id]';
 import NewListingScreen from '@/app/(app)/new-listing';
 import RegisterRoute from '@/app/(app)/register';
 import SettingsScreen from '@/app/(app)/settings';
@@ -17,6 +18,7 @@ const routes = {
   '(app)/index': FeedScreen,
   '(app)/settings': SettingsScreen,
   '(app)/new-listing': NewListingScreen,
+  '(app)/listing/[id]': ListingRoute,
   '(app)/register': RegisterRoute,
   'sign-in': SignInScreen,
 };

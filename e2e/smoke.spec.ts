@@ -59,3 +59,12 @@ test("search finds another user's listing by a word in it", async ({ page }) => 
   await expect(page.getByText('Suzuki Swift')).toBeVisible();
   await expect(page.getByText('MacBook Air 13", like new')).toBeHidden();
 });
+
+test('tapping a listing opens its details with the seller', async ({ page }) => {
+  await page.goto('/');
+  await page.getByText('MacBook Air 13", like new').click();
+
+  await expect(page).toHaveURL(/\/listing\//);
+  await expect(page.getByText('Sold by')).toBeVisible();
+  await expect(page.getByText('Dana', { exact: true })).toBeVisible();
+});
