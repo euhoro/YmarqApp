@@ -2,5 +2,5 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": "hono",
   "installCommand": "npm ci",
-  "buildCommand": "npm run typecheck"
+  "buildCommand": "npm run typecheck && npm run db:deploy"
 }

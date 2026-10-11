@@ -3,12 +3,15 @@ import { cors } from 'hono/cors';
 import { HTTPException } from 'hono/http-exception';
 import { logger } from 'hono/logger';
 
-import { requireAuth, type AuthVariables } from './auth/requireAuth.js';
+import { requireAuth } from './auth/requireAuth.js';
 import type { TokenVerifier } from './auth/verifier.js';
+import { legacyRoutes } from './routes/legacy.js';
+import { productRoutes } from './routes/products.js';
 import type { Stores } from './stores/index.js';
 
-/** Hono environment of the API: request-scoped variables available via `c.get(...)`. */
-export type AppEnv = { Variables: { stores: Stores } & Partial<AuthVariables> };
+import type { AppEnv } from './env.js';
+
+export type { AppEnv } from './env.js';
 
 export interface AppDeps {
   stores: Stores;
@@ -36,9 +39,12 @@ export function createApp({ stores, verifyToken, corsOrigins = '*' }: AppDeps) {
 
   app.get('/health', (c) => c.json({ ok: true }));
 
-  // Everything under /v1 needs a signed-in user.
+  // Everything under /v1 (and the legacy /photos route) needs a signed-in user.
   app.use('/v1/*', requireAuth(verifyToken));
+  app.use('/photos/*', requireAuth(verifyToken));
   app.get('/v1/whoami', (c) => c.json(c.get('user')));
+  app.route('/v1/products', productRoutes);
+  app.route('/photos', legacyRoutes);
 
   app.notFound((c) => c.json({ error: 'Not found' }, 404));
   app.onError((error, c) => {
