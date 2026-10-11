@@ -1,6 +1,9 @@
 import { fireEvent, renderRouter, screen, waitFor } from 'expo-router/testing-library';
 
 import AppLayout from '@/app/(app)/_layout';
+import ConversationRoute from '@/app/(app)/chats/[id]';
+import InboxRoute from '@/app/(app)/chats/index';
+import NewConversationRoute from '@/app/(app)/chats/new';
 import FeedScreen from '@/app/(app)/index';
 import ListingRoute from '@/app/(app)/listing/[id]';
 import NewListingScreen from '@/app/(app)/new-listing';
@@ -27,6 +30,9 @@ function renderApp(auth: FakeAuthService, initialUrl = '/') {
       '(app)/settings': SettingsScreen,
       '(app)/new-listing': NewListingScreen,
       '(app)/listing/[id]': ListingRoute,
+      '(app)/chats/index': InboxRoute,
+      '(app)/chats/[id]': ConversationRoute,
+      '(app)/chats/new': NewConversationRoute,
       '(app)/register': RegisterRoute,
       'sign-in': SignInRoute,
     },
