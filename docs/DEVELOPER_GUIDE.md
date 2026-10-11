@@ -54,6 +54,8 @@ npm run verify     # lint, typecheck, format check, Vitest
 - Storage is chosen with `STORE`: `memory` (default) or `postgres` (needs `DATABASE_URL`, set by the Vercel Neon integration). See `server/.env.example`.
 - **Database schema** lives in `server/src/stores/postgres/schema.ts`. After changing it: `npm run db:generate` (writes a SQL migration to `server/drizzle/`, commit it). `npm run db:migrate` applies migrations to `DATABASE_URL`.
 - **Sign-in:** every `/v1/*` route needs `Authorization: Bearer <token>`. `AUTH_MODE=firebase` (default, and the only mode allowed in production) accepts real Firebase ID tokens; `AUTH_MODE=dev` also accepts `Bearer dev:<userId>` for local work, e.g. `curl -H 'Authorization: Bearer dev:alice' localhost:3001/v1/whoami`.
+- **Endpoints:** `GET /v1/products?q=` (list or search), `GET /v1/products/:id`, `POST /v1/products` (you become the publisher), `DELETE /v1/products/:id` (seller only), and the 2014 route `GET /photos/GetProducts/:userCode` (PascalCase). Try locally: `curl -H 'Authorization: Bearer dev:alice' localhost:3001/v1/products`.
+- **Deploys:** the Vercel build runs `npm run db:deploy`. With `STORE=postgres` it applies migrations (and, with `SEED_SAMPLE_DATA=true`, adds sample listings to an empty table); otherwise it does nothing.
 - Tests run the real migrations against **PGlite** (Postgres in-process), so no database server is needed locally or in CI.
 - Every store implements `ProductStore` and must pass the shared contract tests in `server/src/stores/__tests__/productStoreContract.ts`, which is how Postgres (and DynamoDB later) stay interchangeable.
 - CI runs the API checks in a separate `api` job.
