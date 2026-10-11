@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, type ReactNode } from 'react';
 
 import { createAuthService, type AuthService } from './auth';
+import { createChatRepository, type ChatRepository } from './chat';
 import { createProductRepository, type ProductRepository } from './products';
 import { createProfileRepository, type ProfileRepository } from './profile';
 
@@ -8,14 +9,19 @@ export interface Services {
   auth: AuthService;
   products: ProductRepository;
   profiles: ProfileRepository;
+  chat: ChatRepository;
 }
 
-export function createServices(): Services {
-  const auth = createAuthService();
+/** The default services, with any `overrides` used instead (and by the services built on them). */
+export function createServices(overrides: Partial<Services> = {}): Services {
+  const auth = overrides.auth ?? createAuthService();
+  const products =
+    overrides.products ?? createProductRepository(undefined, () => auth.getIdToken());
   return {
     auth,
-    products: createProductRepository(undefined, () => auth.getIdToken()),
-    profiles: createProfileRepository(),
+    products,
+    profiles: overrides.profiles ?? createProfileRepository(),
+    chat: overrides.chat ?? createChatRepository(auth, products),
   };
 }
 
@@ -32,7 +38,7 @@ export function ServicesProvider({
   services?: Partial<Services>;
   children: ReactNode;
 }) {
-  const [value] = useState<Services>(() => ({ ...createServices(), ...services }));
+  const [value] = useState<Services>(() => createServices(services));
   return <ServicesContext.Provider value={value}>{children}</ServicesContext.Provider>;
 }
 

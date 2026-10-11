@@ -1,9 +1,10 @@
 import { describe, expect, it } from 'vitest';
 
+import { devVerifier } from '../../auth/verifier.js';
 import { createApp } from '../../createApp.js';
 import { createStores } from '../../stores/index.js';
 
-const app = createApp({ stores: createStores('memory') });
+const app = createApp({ stores: createStores('memory'), verifyToken: devVerifier });
 
 describe('API basics', () => {
   it('GET /health returns ok', async () => {

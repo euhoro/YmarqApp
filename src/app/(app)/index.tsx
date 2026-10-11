@@ -30,6 +30,11 @@ export default function FeedScreen() {
                 onPress={() => active.refetch()}
               />
               <IconButton
+                icon="message-text-outline"
+                accessibilityLabel="Messages"
+                onPress={() => router.push('/chats')}
+              />
+              <IconButton
                 icon="cog"
                 accessibilityLabel="Settings"
                 onPress={() => router.push('/settings')}

@@ -3,11 +3,13 @@
 // first of those it finds).
 import { Hono } from 'hono';
 
+import { createTokenVerifier } from './auth/config.js';
 import { createApp, type AppEnv } from './createApp.js';
 import { createStores } from './stores/index.js';
 
 const app: Hono<AppEnv> = createApp({
   stores: createStores(),
+  verifyToken: createTokenVerifier(),
   corsOrigins: process.env.CORS_ORIGINS,
 });
 
