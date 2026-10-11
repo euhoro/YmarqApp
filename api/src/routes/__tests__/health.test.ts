@@ -36,8 +36,14 @@ describe('API basics', () => {
 });
 
 describe('createStores', () => {
-  it('rejects backends that do not exist yet', () => {
-    expect(() => createStores('postgres')).toThrow(/#32/);
+  it('needs DATABASE_URL for postgres and rejects unknown stores', () => {
+    expect(() => createStores('postgres', '')).toThrow(/DATABASE_URL/);
+    expect(() => createStores('dynamo')).toThrow(/Unknown STORE/);
+  });
+
+  it('builds a Postgres store from a URL (no connection until the first query)', () => {
+    const stores = createStores('postgres', 'postgresql://user:pass@example.neon.tech/db');
+    expect(stores.products.constructor.name).toBe('PostgresProductStore');
   });
 });
 

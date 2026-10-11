@@ -51,7 +51,9 @@ npm run dev        # http://localhost:3001/health → {"ok":true}
 npm run verify     # lint, typecheck, format check, Vitest
 ```
 
-- Storage is chosen with `STORE` (`memory` by default; `postgres` from #32). See `api/.env.example`.
+- Storage is chosen with `STORE`: `memory` (default) or `postgres` (needs `DATABASE_URL`, set by the Vercel Neon integration). See `api/.env.example`.
+- **Database schema** lives in `api/src/stores/postgres/schema.ts`. After changing it: `npm run db:generate` (writes a SQL migration to `api/drizzle/`, commit it). `npm run db:migrate` applies migrations to `DATABASE_URL`.
+- Tests run the real migrations against **PGlite** (Postgres in-process), so no database server is needed locally or in CI.
 - Every store implements `ProductStore` and must pass the shared contract tests in `api/src/stores/__tests__/productStoreContract.ts`, which is how Postgres (and DynamoDB later) stay interchangeable.
 - CI runs the API checks in a separate `api` job.
 
