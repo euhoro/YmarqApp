@@ -4,10 +4,12 @@ import { HTTPException } from 'hono/http-exception';
 import { logger } from 'hono/logger';
 
 import { requireAuth } from './auth/requireAuth.js';
+import type { ListingMatchedHandler } from './matching/listingMatched.js';
 import type { TokenVerifier } from './auth/verifier.js';
 import { chatRoutes, type MessageCreatedHandler } from './routes/chat.js';
 import { legacyRoutes } from './routes/legacy.js';
 import { productRoutes } from './routes/products.js';
+import { savedSearchRoutes } from './routes/saved-searches.js';
 import { meRoutes, userRoutes } from './routes/profile.js';
 import { uploadRoutes, type BlobUploadHandler } from './routes/uploads.js';
 import type { Stores } from './stores/index.js';
@@ -23,6 +25,8 @@ export interface AppDeps {
   corsOrigins?: string;
   /** Called after each chat message is stored (`message.created`); push notifications hook in here. */
   onMessageCreated?: MessageCreatedHandler;
+  /** Called after a new listing matches other users' saved searches (`listing.matched`). */
+  onListingMatched?: ListingMatchedHandler;
   /** Vercel Blob `handleUpload` for photo uploads; tests pass a fake. */
   handleUpload?: BlobUploadHandler;
 }
@@ -33,6 +37,7 @@ export function createApp({
   verifyToken,
   corsOrigins = '*',
   onMessageCreated,
+  onListingMatched,
   handleUpload,
 }: AppDeps) {
   const app = new Hono<AppEnv>();
@@ -56,7 +61,8 @@ export function createApp({
   app.use('/v1/*', requireAuth(verifyToken));
   app.use('/photos/*', requireAuth(verifyToken));
   app.get('/v1/whoami', (c) => c.json(c.get('user')));
-  app.route('/v1/products', productRoutes);
+  app.route('/v1/products', productRoutes({ onListingMatched }));
+  app.route('/v1/saved-searches', savedSearchRoutes);
   app.route('/v1/me', meRoutes);
   app.route('/v1/users', userRoutes);
 
