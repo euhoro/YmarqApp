@@ -22,7 +22,7 @@ export function createServices(overrides: Partial<Services> = {}): Services {
   return {
     auth,
     products,
-    profiles: overrides.profiles ?? createProfileRepository(),
+    profiles: overrides.profiles ?? createProfileRepository(undefined, () => auth.getIdToken()),
     chat: overrides.chat ?? createChatRepository(auth, products),
     savedSearches: overrides.savedSearches ?? createSavedSearchRepository(auth),
   };
