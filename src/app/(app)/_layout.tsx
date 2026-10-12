@@ -23,6 +23,7 @@ export default function AppLayout() {
       <Stack.Protected guard={hasProfile}>
         <Stack.Screen name="index" options={{ title: 'Ymarq' }} />
         <Stack.Screen name="settings" options={{ title: 'Settings' }} />
+        <Stack.Screen name="alerts" options={{ title: 'Alerts' }} />
         <Stack.Screen name="new-listing" options={{ title: 'New listing' }} />
         <Stack.Screen name="listing/[id]" options={{ title: 'Listing' }} />
         <Stack.Screen name="chats/index" options={{ title: 'Messages' }} />

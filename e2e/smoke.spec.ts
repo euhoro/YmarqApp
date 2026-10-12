@@ -92,3 +92,18 @@ test('message the seller about a listing, then find the chat in the inbox', asyn
   await expect(page).toHaveURL(/\/chats$/);
   await expect(page.getByText('Dana · MacBook Air 13", like new')).toBeVisible();
 });
+
+test('save a search as an alert, then manage it in Alerts', async ({ page }) => {
+  await page.goto('/');
+  await page.getByLabel('Search listings').fill('swift');
+  await page.getByRole('button', { name: 'Notify me about new matches' }).click();
+  await expect(page.getByText('Alert saved.', { exact: false })).toBeVisible();
+
+  // Alerts are in memory, so navigate in the app instead of reloading it.
+  await page.getByRole('button', { name: 'View alerts' }).click();
+  await expect(page).toHaveURL(/\/alerts$/);
+  await expect(page.getByText('swift', { exact: true })).toBeVisible();
+
+  await page.getByLabel('Delete alert “swift”').click();
+  await expect(page.getByText('No alerts yet')).toBeVisible();
+});

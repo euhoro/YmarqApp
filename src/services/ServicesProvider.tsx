@@ -4,12 +4,14 @@ import { createAuthService, type AuthService } from './auth';
 import { createChatRepository, type ChatRepository } from './chat';
 import { createProductRepository, type ProductRepository } from './products';
 import { createProfileRepository, type ProfileRepository } from './profile';
+import { createSavedSearchRepository, type SavedSearchRepository } from './saved-searches';
 
 export interface Services {
   auth: AuthService;
   products: ProductRepository;
   profiles: ProfileRepository;
   chat: ChatRepository;
+  savedSearches: SavedSearchRepository;
 }
 
 /** The default services, with any `overrides` used instead (and by the services built on them). */
@@ -22,6 +24,7 @@ export function createServices(overrides: Partial<Services> = {}): Services {
     products,
     profiles: overrides.profiles ?? createProfileRepository(),
     chat: overrides.chat ?? createChatRepository(auth, products),
+    savedSearches: overrides.savedSearches ?? createSavedSearchRepository(auth),
   };
 }
 
