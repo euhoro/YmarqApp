@@ -3,6 +3,7 @@ import { z } from 'zod';
 import type { NewProduct, Product } from '@/domain/product';
 
 import { ApiClient, type TokenProvider } from '../api/ApiClient';
+import { isLocalPhoto, type PhotoUploader } from '../photos/ApiPhotoUploader';
 import type { ProductRepository } from './ProductRepository';
 
 /** A product as the Ymarq API returns it (`server/src/routes/products.ts`). */
@@ -26,7 +27,12 @@ export { ApiError, type TokenProvider } from '../api/ApiClient';
 export class ApiProductRepository implements ProductRepository {
   private readonly client: ApiClient;
 
-  constructor(baseUrl: string, getToken: TokenProvider, fetchFn?: typeof fetch) {
+  constructor(
+    baseUrl: string,
+    getToken: TokenProvider,
+    fetchFn?: typeof fetch,
+    private readonly uploadPhoto?: PhotoUploader,
+  ) {
     this.client = new ApiClient(baseUrl, getToken, fetchFn);
   }
 
@@ -51,8 +57,13 @@ export class ApiProductRepository implements ProductRepository {
   }
 
   async createProduct(input: NewProduct): Promise<Product> {
-    // The server sets the publisher from the token; publisherId is not sent.
-    const { publisherId: _publisherId, ...body } = input;
+    // The server sets the publisher from the token; publisherId is not sent (it only names the photo folder).
+    // A photo still on the device is uploaded to Blob first, and its public URL is stored.
+    const { publisherId, ...body } = input;
+    if (body.imageUrl && isLocalPhoto(body.imageUrl)) {
+      if (!this.uploadPhoto) throw new Error('Photo uploads are not set up.');
+      body.imageUrl = await this.uploadPhoto(body.imageUrl, publisherId);
+    }
     return toProduct(await this.client.request('/v1/products', { method: 'POST', body }));
   }
 }
