@@ -5,6 +5,7 @@ import { logger } from 'hono/logger';
 
 import { requireAuth } from './auth/requireAuth.js';
 import type { TokenVerifier } from './auth/verifier.js';
+import { chatRoutes, type MessageCreatedHandler } from './routes/chat.js';
 import { legacyRoutes } from './routes/legacy.js';
 import { productRoutes } from './routes/products.js';
 import type { Stores } from './stores/index.js';
@@ -18,10 +19,12 @@ export interface AppDeps {
   /** Verifies sign-in tokens on protected routes (Firebase, or dev tokens in tests). */
   verifyToken: TokenVerifier;
   corsOrigins?: string;
+  /** Called after each chat message is stored (`message.created`); push notifications hook in here. */
+  onMessageCreated?: MessageCreatedHandler;
 }
 
 /** Builds the API. Tests pass in-memory stores; `index.ts` wires the real ones. */
-export function createApp({ stores, verifyToken, corsOrigins = '*' }: AppDeps) {
+export function createApp({ stores, verifyToken, corsOrigins = '*', onMessageCreated }: AppDeps) {
   const app = new Hono<AppEnv>();
 
   app.use(logger());
@@ -44,6 +47,7 @@ export function createApp({ stores, verifyToken, corsOrigins = '*' }: AppDeps) {
   app.use('/photos/*', requireAuth(verifyToken));
   app.get('/v1/whoami', (c) => c.json(c.get('user')));
   app.route('/v1/products', productRoutes);
+  app.route('/v1/conversations', chatRoutes({ onMessageCreated }));
   app.route('/photos', legacyRoutes);
 
   app.notFound((c) => c.json({ error: 'Not found' }, 404));
