@@ -12,6 +12,7 @@ import RegisterRoute from '@/app/(app)/register';
 import SettingsScreen from '@/app/(app)/settings';
 import SignInRoute from '@/app/sign-in';
 import { AppProviders } from '@/providers/AppProviders';
+import { AuthError } from '@/services/auth';
 import { FAKE_SMS_CODE, FakeAuthService } from '@/services/auth/FakeAuthService';
 import { FakeProductRepository } from '@/services/products/FakeProductRepository';
 
@@ -83,6 +84,21 @@ describe('sign-in and auth gate', () => {
 
     await fireEvent.press(screen.getByRole('button', { name: 'Change number' }));
     expect(screen.getByLabelText('Phone number')).toBeTruthy();
+  });
+
+  it("shows the service's explanation when the code can't be sent", async () => {
+    class BlockedRegionAuth extends FakeAuthService {
+      async startPhoneSignIn(): Promise<never> {
+        throw new AuthError("Sign-in by SMS isn't available for this country yet.");
+      }
+    }
+    const app = renderApp(new BlockedRegionAuth(null));
+    await app;
+
+    await enterPhone('0501234567');
+    await fireEvent.press(screen.getByRole('button', { name: 'Send code' }));
+
+    expect(await screen.findByText(/isn't available for this country/)).toBeTruthy();
   });
 
   it('signs in with the right code; a new user picks a name, then lands on the feed', async () => {
