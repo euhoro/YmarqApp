@@ -85,6 +85,32 @@ describe('ApiProductRepository', () => {
     expect(JSON.parse(init.body)).not.toHaveProperty('publisherId');
   });
 
+  it('uploads a photo from the device first and stores its public URL', async () => {
+    const fetchFn = jest.fn().mockResolvedValue(response(API_PRODUCT, 201));
+    const uploadPhoto = jest
+      .fn()
+      .mockResolvedValue('https://store.public.blob.vercel-storage.com/x.jpg');
+    const repo = new ApiProductRepository(BASE, async () => 'tok', fetchFn, uploadPhoto);
+    const listing = {
+      description: 'Sofa, almost new',
+      hashtag: '',
+      publisherId: 'uid-1',
+      price: null,
+      currency: null,
+      category: null,
+      location: null,
+    };
+
+    await repo.createProduct({ ...listing, imageUrl: 'blob:http://localhost/123' });
+    expect(uploadPhoto).toHaveBeenCalledWith('blob:http://localhost/123', 'uid-1');
+    expect(JSON.parse(fetchFn.mock.calls[0][1].body).imageUrl).toBe(
+      'https://store.public.blob.vercel-storage.com/x.jpg',
+    );
+
+    await repo.createProduct({ ...listing, imageUrl: 'https://example.com/already-online.jpg' });
+    expect(uploadPhoto).toHaveBeenCalledTimes(1);
+  });
+
   it('rejects malformed server data', async () => {
     const { repo } = setup(response([{ id: 1 }]));
 

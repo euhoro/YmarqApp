@@ -1,5 +1,6 @@
 import { getApiUrl, getDataSource, getLegacyApiUrl, type DataSource } from '@/config/env';
 
+import { createApiPhotoUploader } from '../photos/ApiPhotoUploader';
 import { ApiProductRepository, type TokenProvider } from './ApiProductRepository';
 
 import { FakeProductRepository } from './FakeProductRepository';
@@ -19,7 +20,12 @@ export function createProductRepository(
     case 'fake':
       return new FakeProductRepository();
     case 'api':
-      return new ApiProductRepository(getApiUrl(), getToken);
+      return new ApiProductRepository(
+        getApiUrl(),
+        getToken,
+        undefined,
+        createApiPhotoUploader(getApiUrl(), getToken),
+      );
     case 'legacy':
       return new LegacyApiProductRepository(getLegacyApiUrl(), fetch, getToken);
   }
