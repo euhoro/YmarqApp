@@ -11,3 +11,12 @@ export function useCurrentUser(): AuthUser | null {
     () => auth.getCurrentUser(),
   );
 }
+
+/** False while the saved session is still being restored after a reload. */
+export function useAuthReady(): boolean {
+  const { auth } = useServices();
+  return useSyncExternalStore(
+    (onChange) => auth.onAuthStateChanged(onChange),
+    () => auth.isReady(),
+  );
+}

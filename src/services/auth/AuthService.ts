@@ -10,8 +10,13 @@ export interface PhoneVerification {
  * and Firebase Auth (F6: native SDK on iOS/Android, JS SDK + reCAPTCHA on web).
  */
 export interface AuthService {
+  /**
+   * False until the saved session has been restored (Firebase reads it asynchronously after a reload).
+   * Until then `getCurrentUser()` is null even for signed-in users, so the auth gate waits.
+   */
+  isReady(): boolean;
   getCurrentUser(): AuthUser | null;
-  /** Calls `listener` now and on every change. Returns an unsubscribe function. */
+  /** Calls `listener` now and on every change (including becoming ready). Returns an unsubscribe function. */
   onAuthStateChanged(listener: (user: AuthUser | null) => void): () => void;
   /** Sends an SMS code. `phoneNumber` is in E.164 format, e.g. +972501234567. */
   startPhoneSignIn(phoneNumber: string): Promise<PhoneVerification>;

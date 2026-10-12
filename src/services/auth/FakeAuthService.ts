@@ -14,6 +14,10 @@ export class FakeAuthService implements AuthService {
 
   constructor(private user: AuthUser | null = DEMO_USER) {}
 
+  isReady(): boolean {
+    return true;
+  }
+
   getCurrentUser(): AuthUser | null {
     return this.user;
   }
