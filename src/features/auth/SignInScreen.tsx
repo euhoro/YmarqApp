@@ -2,12 +2,16 @@ import { useState } from 'react';
 import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet } from 'react-native';
 import { Button, HelperText, SegmentedButtons, Text, TextInput } from 'react-native-paper';
 
-import type { PhoneVerification } from '@/services/auth';
+import { AuthError, type PhoneVerification } from '@/services/auth';
 import { useServices } from '@/services/ServicesProvider';
 
 import { COUNTRY_CODES, toE164 } from './phone';
 
 const CODE_LENGTH = 6;
+
+/** The service's own explanation when it has one (e.g. "SMS isn't enabled for this country"). */
+const messageFor = (cause: unknown, fallback: string) =>
+  cause instanceof AuthError ? cause.message : fallback;
 
 /**
  * Phone sign-in in two steps: number → SMS code. Registration and login are the same flow.
@@ -34,8 +38,8 @@ export function SignInScreen() {
       setVerification(await auth.startPhoneSignIn(e164));
       setSentTo(e164);
       setCode('');
-    } catch {
-      setError("Couldn't send the code. Check the number and try again.");
+    } catch (cause) {
+      setError(messageFor(cause, "Couldn't send the code. Check the number and try again."));
     } finally {
       setBusy(false);
     }
@@ -47,8 +51,8 @@ export function SignInScreen() {
     setError(null);
     try {
       await verification.confirm(code);
-    } catch {
-      setError('Wrong code. Check the SMS and try again.');
+    } catch (cause) {
+      setError(messageFor(cause, 'Wrong code. Check the SMS and try again.'));
       setBusy(false);
     }
   };

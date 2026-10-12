@@ -3,6 +3,7 @@
  */
 import type { Auth, User } from 'firebase/auth';
 
+import { AuthError } from '../AuthService';
 import { FirebaseAuthService } from '../FirebaseAuthService.web';
 
 const mockSignInWithPhoneNumber = jest.fn();
@@ -28,7 +29,10 @@ function setup(currentUser: { getIdToken: () => Promise<string> } | null = null)
 }
 
 describe('FirebaseAuthService (web)', () => {
-  beforeEach(() => jest.clearAllMocks());
+  beforeEach(() => {
+    jest.clearAllMocks();
+    jest.spyOn(console, 'warn').mockImplementation(() => {});
+  });
 
   it('is not ready until Firebase has restored the session', () => {
     const { service } = setup();
@@ -74,6 +78,33 @@ describe('FirebaseAuthService (web)', () => {
     await expect(service.startPhoneSignIn('+1555')).rejects.toThrow('auth/invalid-phone-number');
     expect(mockRecaptchaClear).toHaveBeenCalled();
     expect(document.body.children).toHaveLength(0);
+  });
+
+  it('explains known Firebase errors to the user', async () => {
+    mockSignInWithPhoneNumber.mockRejectedValue(
+      Object.assign(new Error('Firebase: Error (auth/operation-not-allowed).'), {
+        code: 'auth/operation-not-allowed',
+      }),
+    );
+    const { service } = setup();
+
+    const failure = service.startPhoneSignIn('+16505551234');
+
+    await expect(failure).rejects.toBeInstanceOf(AuthError);
+    await expect(failure).rejects.toMatchObject({
+      code: 'auth/operation-not-allowed',
+      message: expect.stringMatching(/isn't available for this country/),
+    });
+  });
+
+  it('explains a wrong code', async () => {
+    const confirm = jest
+      .fn()
+      .mockRejectedValue(Object.assign(new Error('x'), { code: 'auth/invalid-verification-code' }));
+    mockSignInWithPhoneNumber.mockResolvedValue({ confirm });
+    const verification = await setup().service.startPhoneSignIn('+16505551234');
+
+    await expect(verification.confirm('000000')).rejects.toThrow(/Wrong code/);
   });
 
   it('returns the Firebase ID token for the API, or null when signed out', async () => {

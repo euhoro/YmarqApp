@@ -1,5 +1,17 @@
 import type { AuthUser } from '@/domain/user';
 
+/** A sign-in failure with a message meant for the user (shown as is on the sign-in screen). */
+export class AuthError extends Error {
+  constructor(
+    message: string,
+    /** The provider's error code, e.g. `auth/too-many-requests`, for logs. */
+    readonly code?: string,
+  ) {
+    super(message);
+    this.name = 'AuthError';
+  }
+}
+
 /** A pending phone sign-in: the SMS was sent, and the user must enter the code. */
 export interface PhoneVerification {
   confirm(code: string): Promise<AuthUser>;

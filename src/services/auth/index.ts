@@ -4,6 +4,7 @@ import { getAuthMode, getFakeAuthSignedIn, getFirebaseConfig } from '@/config/en
 import { DEMO_USER, FakeAuthService } from './FakeAuthService';
 import { createFirebaseAuthService } from './FirebaseAuthService';
 
+export { AuthError } from './AuthService';
 export type { AuthService, PhoneVerification } from './AuthService';
 
 /** `EXPO_PUBLIC_AUTH`: fake (default, demo code 123456) or firebase (real SMS; web only for now). */
