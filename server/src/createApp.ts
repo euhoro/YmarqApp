@@ -9,6 +9,7 @@ import { chatRoutes, type MessageCreatedHandler } from './routes/chat.js';
 import { legacyRoutes } from './routes/legacy.js';
 import { productRoutes } from './routes/products.js';
 import { meRoutes, userRoutes } from './routes/profile.js';
+import { uploadRoutes, type BlobUploadHandler } from './routes/uploads.js';
 import type { Stores } from './stores/index.js';
 
 import type { AppEnv } from './env.js';
@@ -22,10 +23,18 @@ export interface AppDeps {
   corsOrigins?: string;
   /** Called after each chat message is stored (`message.created`); push notifications hook in here. */
   onMessageCreated?: MessageCreatedHandler;
+  /** Vercel Blob `handleUpload` for photo uploads; tests pass a fake. */
+  handleUpload?: BlobUploadHandler;
 }
 
 /** Builds the API. Tests pass in-memory stores; `index.ts` wires the real ones. */
-export function createApp({ stores, verifyToken, corsOrigins = '*', onMessageCreated }: AppDeps) {
+export function createApp({
+  stores,
+  verifyToken,
+  corsOrigins = '*',
+  onMessageCreated,
+  handleUpload,
+}: AppDeps) {
   const app = new Hono<AppEnv>();
 
   app.use(logger());
@@ -52,6 +61,7 @@ export function createApp({ stores, verifyToken, corsOrigins = '*', onMessageCre
   app.route('/v1/users', userRoutes);
 
   app.route('/v1/conversations', chatRoutes({ onMessageCreated }));
+  app.route('/v1/uploads', uploadRoutes({ handleUpload }));
   app.route('/photos', legacyRoutes);
 
   app.notFound((c) => c.json({ error: 'Not found' }, 404));
