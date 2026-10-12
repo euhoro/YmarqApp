@@ -20,3 +20,12 @@ export const products = pgTable(
     index('products_publisher_id_idx').on(table.publisherId),
   ],
 );
+
+/** User profiles, keyed by the Firebase user id. */
+export const profiles = pgTable('profiles', {
+  id: text('id').primaryKey(),
+  displayName: text('display_name').notNull(),
+  phoneNumber: text('phone_number'),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+});
