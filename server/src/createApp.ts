@@ -4,10 +4,12 @@ import { HTTPException } from 'hono/http-exception';
 import { logger } from 'hono/logger';
 
 import { requireAuth } from './auth/requireAuth.js';
+import type { ListingMatchedHandler } from './matching/listingMatched.js';
 import type { TokenVerifier } from './auth/verifier.js';
 import { chatRoutes, type MessageCreatedHandler } from './routes/chat.js';
 import { legacyRoutes } from './routes/legacy.js';
 import { productRoutes } from './routes/products.js';
+import { savedSearchRoutes } from './routes/saved-searches.js';
 import { meRoutes, userRoutes } from './routes/profile.js';
 import type { Stores } from './stores/index.js';
 
@@ -22,10 +24,18 @@ export interface AppDeps {
   corsOrigins?: string;
   /** Called after each chat message is stored (`message.created`); push notifications hook in here. */
   onMessageCreated?: MessageCreatedHandler;
+  /** Called after a new listing matches other users' saved searches (`listing.matched`). */
+  onListingMatched?: ListingMatchedHandler;
 }
 
 /** Builds the API. Tests pass in-memory stores; `index.ts` wires the real ones. */
-export function createApp({ stores, verifyToken, corsOrigins = '*', onMessageCreated }: AppDeps) {
+export function createApp({
+  stores,
+  verifyToken,
+  corsOrigins = '*',
+  onMessageCreated,
+  onListingMatched,
+}: AppDeps) {
   const app = new Hono<AppEnv>();
 
   app.use(logger());
@@ -47,7 +57,8 @@ export function createApp({ stores, verifyToken, corsOrigins = '*', onMessageCre
   app.use('/v1/*', requireAuth(verifyToken));
   app.use('/photos/*', requireAuth(verifyToken));
   app.get('/v1/whoami', (c) => c.json(c.get('user')));
-  app.route('/v1/products', productRoutes);
+  app.route('/v1/products', productRoutes({ onListingMatched }));
+  app.route('/v1/saved-searches', savedSearchRoutes);
   app.route('/v1/me', meRoutes);
   app.route('/v1/users', userRoutes);
 

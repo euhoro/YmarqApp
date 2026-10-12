@@ -1,4 +1,14 @@
-import { index, numeric, pgTable, text, timestamp, unique, uuid } from 'drizzle-orm/pg-core';
+import { sql } from 'drizzle-orm';
+import {
+  index,
+  numeric,
+  pgTable,
+  text,
+  timestamp,
+  unique,
+  uniqueIndex,
+  uuid,
+} from 'drizzle-orm/pg-core';
 
 /** Listings. Column names are snake_case; the API maps them to the camelCase `Product`. */
 export const products = pgTable(
@@ -63,5 +73,21 @@ export const messages = pgTable(
   },
   (table) => [
     index('messages_conversation_created_at_idx').on(table.conversationId, table.createdAt),
+  ],
+);
+
+// --- Saved searches (#50) ---
+
+/** A user's saved search ("alert"); one per (user, query ignoring case). */
+export const savedSearches = pgTable(
+  'saved_searches',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    userId: text('user_id').notNull(),
+    query: text('query').notNull(),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [
+    uniqueIndex('saved_searches_user_query_unique').on(table.userId, sql`lower(${table.query})`),
   ],
 );
