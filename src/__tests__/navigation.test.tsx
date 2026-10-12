@@ -1,6 +1,7 @@
 import { renderRouter, screen, waitFor } from 'expo-router/testing-library';
 
 import AppLayout from '@/app/(app)/_layout';
+import AlertsRoute from '@/app/(app)/alerts';
 import ConversationRoute from '@/app/(app)/chats/[id]';
 import InboxRoute from '@/app/(app)/chats/index';
 import NewConversationRoute from '@/app/(app)/chats/new';
@@ -20,6 +21,7 @@ const routes = {
   '(app)/_layout': AppLayout,
   '(app)/index': FeedScreen,
   '(app)/settings': SettingsScreen,
+  '(app)/alerts': AlertsRoute,
   '(app)/new-listing': NewListingScreen,
   '(app)/listing/[id]': ListingRoute,
   '(app)/chats/index': InboxRoute,

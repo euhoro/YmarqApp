@@ -8,6 +8,7 @@ import type { TokenVerifier } from './auth/verifier.js';
 import { chatRoutes, type MessageCreatedHandler } from './routes/chat.js';
 import { legacyRoutes } from './routes/legacy.js';
 import { productRoutes } from './routes/products.js';
+import { meRoutes, userRoutes } from './routes/profile.js';
 import type { Stores } from './stores/index.js';
 
 import type { AppEnv } from './env.js';
@@ -47,6 +48,9 @@ export function createApp({ stores, verifyToken, corsOrigins = '*', onMessageCre
   app.use('/photos/*', requireAuth(verifyToken));
   app.get('/v1/whoami', (c) => c.json(c.get('user')));
   app.route('/v1/products', productRoutes);
+  app.route('/v1/me', meRoutes);
+  app.route('/v1/users', userRoutes);
+
   app.route('/v1/conversations', chatRoutes({ onMessageCreated }));
   app.route('/photos', legacyRoutes);
 

@@ -1,4 +1,26 @@
-import { getApiUrl, getDataSource, getLegacyApiUrl } from '../env';
+import { getApiUrl, getAuthMode, getDataSource, getFirebaseConfig, getLegacyApiUrl } from '../env';
+
+describe('getAuthMode', () => {
+  it('defaults to fake and accepts firebase', () => {
+    expect(getAuthMode('')).toBe('fake');
+    expect(getAuthMode('firebase')).toBe('firebase');
+    expect(() => getAuthMode('google')).toThrow(/Unknown EXPO_PUBLIC_AUTH/);
+  });
+});
+
+describe('getFirebaseConfig', () => {
+  it('requires the web app config', () => {
+    expect(() => getFirebaseConfig({ projectId: 'ymarq-35862' })).toThrow(/EXPO_PUBLIC_FIREBASE/);
+    expect(
+      getFirebaseConfig({
+        apiKey: 'key',
+        authDomain: 'ymarq-35862.firebaseapp.com',
+        projectId: 'ymarq-35862',
+        appId: 'app',
+      }),
+    ).toMatchObject({ apiKey: 'key', projectId: 'ymarq-35862' });
+  });
+});
 
 describe('getDataSource', () => {
   it('defaults to fake', () => {

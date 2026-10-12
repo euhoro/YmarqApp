@@ -21,6 +21,15 @@ export const products = pgTable(
   ],
 );
 
+/** User profiles, keyed by the Firebase user id. */
+export const profiles = pgTable('profiles', {
+  id: text('id').primaryKey(),
+  displayName: text('display_name').notNull(),
+  phoneNumber: text('phone_number'),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+});
+
 // --- Chat (#49) ---
 
 /** A buyer talking to a seller about one listing; one per (product, buyer). */

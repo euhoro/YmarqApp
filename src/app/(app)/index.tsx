@@ -6,6 +6,7 @@ import { IconButton, Searchbar } from 'react-native-paper';
 import { TakePhotoFab } from '@/features/camera/TakePhotoFab';
 import { ProductList } from '@/features/feed/components/ProductList';
 import { useProducts } from '@/features/feed/useProducts';
+import { NotifyMeButton } from '@/features/saved-searches/NotifyMeButton';
 import { useDebouncedValue } from '@/features/search/useDebouncedValue';
 import { useSearchProducts } from '@/features/search/useSearchProducts';
 
@@ -51,6 +52,7 @@ export default function FeedScreen() {
         style={styles.search}
         autoCorrect={false}
       />
+      <NotifyMeButton query={debouncedQuery} style={styles.notify} />
       <ProductList
         products={active.data ?? []}
         isLoading={active.isLoading}
@@ -70,6 +72,7 @@ const styles = StyleSheet.create({
   container: { flex: 1 },
   headerActions: { flexDirection: 'row' },
   search: { marginHorizontal: 16, marginTop: 12 },
+  notify: { marginHorizontal: 16, marginTop: 8 },
   // Keeps the last card clear of the floating camera button.
   listContent: { paddingBottom: 88 },
 });

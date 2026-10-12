@@ -35,6 +35,22 @@ export function SettingsScreen() {
           left={(props) => <List.Icon {...props} icon="account" />}
         />
       </List.Section>
+      {user ? (
+        <>
+          <Divider />
+          <List.Section>
+            <List.Subheader>Notifications</List.Subheader>
+            <List.Item
+              title="Alerts"
+              description="Saved searches we notify you about"
+              accessibilityRole="button"
+              onPress={() => router.push('/alerts')}
+              left={(props) => <List.Icon {...props} icon="bell-outline" />}
+              right={(props) => <List.Icon {...props} icon="chevron-right" />}
+            />
+          </List.Section>
+        </>
+      ) : null}
       <Divider />
       <List.Section>
         <List.Subheader>About</List.Subheader>
