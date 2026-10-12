@@ -11,6 +11,7 @@ import { legacyRoutes } from './routes/legacy.js';
 import { productRoutes } from './routes/products.js';
 import { savedSearchRoutes } from './routes/saved-searches.js';
 import { meRoutes, userRoutes } from './routes/profile.js';
+import { uploadRoutes, type BlobUploadHandler } from './routes/uploads.js';
 import type { Stores } from './stores/index.js';
 
 import type { AppEnv } from './env.js';
@@ -26,6 +27,8 @@ export interface AppDeps {
   onMessageCreated?: MessageCreatedHandler;
   /** Called after a new listing matches other users' saved searches (`listing.matched`). */
   onListingMatched?: ListingMatchedHandler;
+  /** Vercel Blob `handleUpload` for photo uploads; tests pass a fake. */
+  handleUpload?: BlobUploadHandler;
 }
 
 /** Builds the API. Tests pass in-memory stores; `index.ts` wires the real ones. */
@@ -35,6 +38,7 @@ export function createApp({
   corsOrigins = '*',
   onMessageCreated,
   onListingMatched,
+  handleUpload,
 }: AppDeps) {
   const app = new Hono<AppEnv>();
 
@@ -63,6 +67,7 @@ export function createApp({
   app.route('/v1/users', userRoutes);
 
   app.route('/v1/conversations', chatRoutes({ onMessageCreated }));
+  app.route('/v1/uploads', uploadRoutes({ handleUpload }));
   app.route('/photos', legacyRoutes);
 
   app.notFound((c) => c.json({ error: 'Not found' }, 404));
