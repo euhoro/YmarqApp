@@ -29,6 +29,13 @@
       "when": 1791779626053,
       "tag": "0003_create_saved_searches",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1791880774681,
+      "tag": "0004_create_devices",
+      "breakpoints": true
     }
   ]
 }
