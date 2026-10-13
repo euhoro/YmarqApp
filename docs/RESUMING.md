@@ -17,6 +17,27 @@ Run these from the repo folder (`cd ~/PycharmProjects/YmarqApp`); sessions are s
 - A fresh session is cheaper and is fine for most days: the state of the work lives in GitHub
   (issues, PRs, CI) and in Claude's memory, not in the old chat.
 
+### Remote control (driving the Mac from claude.ai or the phone app)
+
+```bash
+cd ~/PycharmProjects/YmarqApp
+caffeinate -dimsu & claude remote-control --spawn worktree --permission-mode acceptEdits --name "ymarq-<topic>"
+```
+
+- Run **one** `claude remote-control` at a time. Stop the old one (Ctrl+C in its terminal) before
+  starting a new one; `ps aux | grep "claude remote-control"` shows what is running.
+- `--name` names the session that is created **in the repo folder** when the command starts. On
+  2026-10-13 a second run (`ymarq2`) picked up the session that the first run (`ymarq1`) had
+  just created there, so it still showed `ymarq1`. If that happens, rename it from inside
+  (`/rename ymarq2`) or ask Claude to rename it.
+- `--spawn worktree`: sessions you start from claude.ai get their own copy of the repo under
+  `.claude/worktrees/`, so two of them can work at once without touching each other's files.
+  The first session (in the repo folder) does not.
+- `claude remote-control -c` reattaches to the last remote-control session in this folder (within
+  about 4 hours) instead of creating a new one.
+- `caffeinate -dimsu &` keeps the Mac awake; it keeps running after you stop Claude
+  (`killall caffeinate` to stop it).
+
 ## For agents: the resume checklist
 
 1. Read `AGENTS.md`, then the handoff note in memory (`ymarq-handoff`): what was in flight and
