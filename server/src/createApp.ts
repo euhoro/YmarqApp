@@ -7,6 +7,7 @@ import { requireAuth } from './auth/requireAuth.js';
 import type { ListingMatchedHandler } from './matching/listingMatched.js';
 import type { TokenVerifier } from './auth/verifier.js';
 import { chatRoutes, type MessageCreatedHandler } from './routes/chat.js';
+import { deviceRoutes } from './routes/devices.js';
 import { legacyRoutes } from './routes/legacy.js';
 import { productRoutes } from './routes/products.js';
 import { savedSearchRoutes } from './routes/saved-searches.js';
@@ -65,6 +66,7 @@ export function createApp({
   app.route('/v1/saved-searches', savedSearchRoutes);
   app.route('/v1/me', meRoutes);
   app.route('/v1/users', userRoutes);
+  app.route('/v1/devices', deviceRoutes);
 
   app.route('/v1/conversations', chatRoutes({ onMessageCreated }));
   app.route('/v1/uploads', uploadRoutes({ handleUpload }));

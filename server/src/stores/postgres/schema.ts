@@ -91,3 +91,25 @@ export const savedSearches = pgTable(
     uniqueIndex('saved_searches_user_query_unique').on(table.userId, sql`lower(${table.query})`),
   ],
 );
+
+/** Expo push tokens of users' phones; a token belongs to one user at a time. */
+export const devices = pgTable(
+  'devices',
+  {
+    token: text('token').primaryKey(),
+    userId: text('user_id').notNull(),
+    updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [index('devices_user_id_idx').on(table.userId)],
+);
+
+/** Sent pushes whose Expo receipts are still to be checked for dead tokens. */
+export const pushTickets = pgTable(
+  'push_tickets',
+  {
+    id: text('id').primaryKey(),
+    token: text('token').notNull(),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [index('push_tickets_created_at_idx').on(table.createdAt)],
+);
