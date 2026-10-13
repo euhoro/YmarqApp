@@ -8,10 +8,7 @@ export interface SavedSearch {
   createdAt: string;
 }
 
-/**
- * The signed-in user's saved searches ("alerts"). Implementations: fake (in memory) now, the API
- * (#50) later.
- */
+/** The signed-in user's saved searches ("alerts"). Implementations: fake (in memory) and the API. */
 export interface SavedSearchRepository {
   /** The user's saved searches, newest first. */
   listSavedSearches(): Promise<SavedSearch[]>;

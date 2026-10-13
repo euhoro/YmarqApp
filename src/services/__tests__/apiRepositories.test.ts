@@ -1,6 +1,7 @@
 import { ApiClient, ApiError } from '../api/ApiClient';
 import { ApiChatRepository } from '../chat/ApiChatRepository';
 import { ApiProfileRepository } from '../profile/ApiProfileRepository';
+import { ApiSavedSearchRepository } from '../saved-searches/ApiSavedSearchRepository';
 
 const BASE = 'https://ymarq-app-api.vercel.app';
 
@@ -142,5 +143,55 @@ describe('ApiChatRepository', () => {
 
     expect(await repo.getConversation('c1')).toBeNull();
     expect(await repo.getConversation('c2')).toBeNull();
+  });
+});
+
+describe('ApiSavedSearchRepository', () => {
+  const SEARCH = {
+    id: 's1',
+    userId: 'avi',
+    query: 'bike',
+    createdAt: '2026-10-12T07:00:00.000Z',
+  };
+
+  it('lists and saves searches, sending the trimmed query', async () => {
+    const { client, call } = setup(response([SEARCH]), response(SEARCH, 201));
+    const repo = new ApiSavedSearchRepository(client);
+
+    expect(await repo.listSavedSearches()).toEqual([SEARCH]);
+    expect(call(0)).toEqual({ url: `${BASE}/v1/saved-searches`, method: 'GET', body: undefined });
+    expect(await repo.saveSearch('  bike ')).toEqual(SEARCH);
+    expect(call(1)).toEqual({
+      url: `${BASE}/v1/saved-searches`,
+      method: 'POST',
+      body: { query: 'bike' },
+    });
+  });
+
+  it('rejects an empty query without calling the server', async () => {
+    const { client, fetchFn } = setup();
+
+    await expect(new ApiSavedSearchRepository(client).saveSearch('   ')).rejects.toThrow(
+      'Type something to search for first.',
+    );
+    expect(fetchFn).not.toHaveBeenCalled();
+  });
+
+  it('deletes a search and ignores one that is already gone', async () => {
+    const { client, call } = setup(
+      response(null, 204),
+      response({ error: 'Saved search not found' }, 404),
+      response({ error: 'Internal server error' }, 500),
+    );
+    const repo = new ApiSavedSearchRepository(client);
+
+    await repo.deleteSavedSearch('s 1');
+    expect(call(0)).toEqual({
+      url: `${BASE}/v1/saved-searches/s%201`,
+      method: 'DELETE',
+      body: undefined,
+    });
+    await expect(repo.deleteSavedSearch('s2')).resolves.toBeUndefined();
+    await expect(repo.deleteSavedSearch('s3')).rejects.toMatchObject({ status: 500 });
   });
 });
