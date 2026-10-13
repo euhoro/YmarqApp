@@ -1,0 +1,41 @@
+name: EAS build
+
+# Builds the iOS/Android app in Expo's cloud (EAS Build) on demand: Actions → EAS build → Run workflow.
+# Needs the repo secret EXPO_TOKEN (expo.dev → account ymarq → Access tokens). The job only queues
+# the build; follow it and download the result on expo.dev (link in the job log).
+on:
+  workflow_dispatch:
+    inputs:
+      profile:
+        description: Build profile (eas.json)
+        type: choice
+        options: [development, preview, production]
+        default: development
+      platform:
+        description: Platform
+        type: choice
+        options: [all, ios, android]
+        default: all
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+      - run: npm ci
+      - name: Queue the build
+        run: >-
+          eas build --platform ${{ inputs.platform }} --profile ${{ inputs.profile }}
+          --non-interactive --no-wait
