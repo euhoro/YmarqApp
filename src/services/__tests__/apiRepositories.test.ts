@@ -1,5 +1,6 @@
 import { ApiClient, ApiError } from '../api/ApiClient';
 import { ApiChatRepository } from '../chat/ApiChatRepository';
+import { ApiNotificationsRepository } from '../notifications/ApiNotificationsRepository';
 import { ApiProfileRepository } from '../profile/ApiProfileRepository';
 import { ApiSavedSearchRepository } from '../saved-searches/ApiSavedSearchRepository';
 
@@ -193,5 +194,23 @@ describe('ApiSavedSearchRepository', () => {
     });
     await expect(repo.deleteSavedSearch('s2')).resolves.toBeUndefined();
     await expect(repo.deleteSavedSearch('s3')).rejects.toMatchObject({ status: 500 });
+  });
+});
+
+describe('ApiNotificationsRepository', () => {
+  it('registers and unregisters this phone’s push token', async () => {
+    const token = 'ExponentPushToken[abc]';
+    const { client, call } = setup(response({ token, userId: 'avi' }, 201), response(null, 204));
+    const repo = new ApiNotificationsRepository(client);
+
+    await repo.registerDevice(token);
+    await repo.unregisterDevice(token);
+
+    expect(call(0)).toEqual({ url: `${BASE}/v1/devices`, method: 'POST', body: { token } });
+    expect(call(1)).toEqual({
+      url: `${BASE}/v1/devices/ExponentPushToken%5Babc%5D`,
+      method: 'DELETE',
+      body: undefined,
+    });
   });
 });

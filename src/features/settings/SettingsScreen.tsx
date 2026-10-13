@@ -5,16 +5,18 @@ import { Button, Divider, List } from 'react-native-paper';
 
 import { getDataSource } from '@/config/env';
 import { useCurrentUser } from '@/features/auth/useCurrentUser';
+import { forgetThisDevice } from '@/features/notifications/forgetThisDevice';
 import { useProfile } from '@/features/profile/useProfile';
 import { useServices } from '@/services/ServicesProvider';
 
 export function SettingsScreen() {
-  const { auth } = useServices();
+  const services = useServices();
   const user = useCurrentUser();
   const profile = useProfile();
 
   const signOut = async () => {
-    await auth.signOut();
+    await forgetThisDevice(services);
+    await services.auth.signOut();
     router.replace('/sign-in');
   };
 

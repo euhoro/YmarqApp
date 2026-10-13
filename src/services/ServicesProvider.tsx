@@ -2,6 +2,12 @@ import { createContext, useContext, useState, type ReactNode } from 'react';
 
 import { createAuthService, type AuthService } from './auth';
 import { createChatRepository, type ChatRepository } from './chat';
+import {
+  createNotificationsRepository,
+  createPushClient,
+  type NotificationsRepository,
+  type PushClient,
+} from './notifications';
 import { createProductRepository, type ProductRepository } from './products';
 import { createProfileRepository, type ProfileRepository } from './profile';
 import { createSavedSearchRepository, type SavedSearchRepository } from './saved-searches';
@@ -12,6 +18,8 @@ export interface Services {
   profiles: ProfileRepository;
   chat: ChatRepository;
   savedSearches: SavedSearchRepository;
+  notifications: NotificationsRepository;
+  push: PushClient;
 }
 
 /** The default services, with any `overrides` used instead (and by the services built on them). */
@@ -25,6 +33,8 @@ export function createServices(overrides: Partial<Services> = {}): Services {
     profiles: overrides.profiles ?? createProfileRepository(undefined, () => auth.getIdToken()),
     chat: overrides.chat ?? createChatRepository(auth, products),
     savedSearches: overrides.savedSearches ?? createSavedSearchRepository(auth),
+    notifications: overrides.notifications ?? createNotificationsRepository(auth),
+    push: overrides.push ?? createPushClient(),
   };
 }
 
