@@ -2,6 +2,7 @@ import { Stack } from 'expo-router';
 import { StyleSheet, View } from 'react-native';
 import { ActivityIndicator } from 'react-native-paper';
 
+import { PushNotifications } from '@/features/notifications/PushNotifications';
 import { useProfile } from '@/features/profile/useProfile';
 
 // Screens for signed-in users (protected by RootNavigator). New private screens go in this folder and
@@ -19,21 +20,24 @@ export default function AppLayout() {
   const hasProfile = profile.data != null;
 
   return (
-    <Stack>
-      <Stack.Protected guard={hasProfile}>
-        <Stack.Screen name="index" options={{ title: 'Ymarq' }} />
-        <Stack.Screen name="settings" options={{ title: 'Settings' }} />
-        <Stack.Screen name="alerts" options={{ title: 'Alerts' }} />
-        <Stack.Screen name="new-listing" options={{ title: 'New listing' }} />
-        <Stack.Screen name="listing/[id]" options={{ title: 'Listing' }} />
-        <Stack.Screen name="chats/index" options={{ title: 'Messages' }} />
-        <Stack.Screen name="chats/[id]" options={{ title: 'Chat' }} />
-        <Stack.Screen name="chats/new" options={{ title: 'Chat' }} />
-      </Stack.Protected>
-      <Stack.Protected guard={!hasProfile}>
-        <Stack.Screen name="register" options={{ title: 'Welcome' }} />
-      </Stack.Protected>
-    </Stack>
+    <>
+      <Stack>
+        <Stack.Protected guard={hasProfile}>
+          <Stack.Screen name="index" options={{ title: 'Ymarq' }} />
+          <Stack.Screen name="settings" options={{ title: 'Settings' }} />
+          <Stack.Screen name="alerts" options={{ title: 'Alerts' }} />
+          <Stack.Screen name="new-listing" options={{ title: 'New listing' }} />
+          <Stack.Screen name="listing/[id]" options={{ title: 'Listing' }} />
+          <Stack.Screen name="chats/index" options={{ title: 'Messages' }} />
+          <Stack.Screen name="chats/[id]" options={{ title: 'Chat' }} />
+          <Stack.Screen name="chats/new" options={{ title: 'Chat' }} />
+        </Stack.Protected>
+        <Stack.Protected guard={!hasProfile}>
+          <Stack.Screen name="register" options={{ title: 'Welcome' }} />
+        </Stack.Protected>
+      </Stack>
+      {hasProfile ? <PushNotifications /> : null}
+    </>
   );
 }
 
