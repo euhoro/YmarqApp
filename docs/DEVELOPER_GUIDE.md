@@ -31,7 +31,7 @@ No Java, Android Studio or Firebase files are needed for day-to-day work: the ap
 | Target | Command | Opens |
 |---|---|---|
 | Web | `npm run web` | http://localhost:8081 |
-| iOS Simulator | `npm run ios` | Needs Xcode |
+| iOS Simulator | `npm run ios` | Needs Xcode (or use an EAS build, below) |
 | Android | `npm run android` | Needs an emulator or phone (later) |
 
 The dev server reloads on every save. Press `Ctrl+C` in the terminal to stop it.
@@ -43,6 +43,28 @@ The dev server reloads on every save. Press `Ctrl+C` in the terminal to stop it.
 **Real Firebase sign-in (web):** set `EXPO_PUBLIC_AUTH=firebase` and the `EXPO_PUBLIC_FIREBASE_*` values in `.env.local`, then `npx expo start --web --clear`. Use the Firebase test number **+1 650-555-1234**, code **123456** (no SMS is sent). An invisible reCAPTCHA runs on **Send code**; automated browsers (Playwright) usually get an image challenge, so this step is checked by hand. The domain must be in Firebase console → Authentication → Settings → **Authorized domains** (`localhost` is there by default). Native iOS/Android sign-in is #13. Countries must also be allowed in Authentication → Settings → **SMS region policy** (even for test numbers); otherwise Firebase answers `auth/operation-not-allowed` and the app says SMS isn't available for this country. The browser console logs the exact Firebase error.
 
 **App + local server, end to end:** in one terminal `cd server && AUTH_MODE=dev npm run dev`; in `.env.local` set `EXPO_PUBLIC_DATA_SOURCE=api` and `EXPO_PUBLIC_API_URL=http://localhost:3001`; then `npm run web`. The fake sign-in sends `dev:<userId>` tokens, which the server accepts only in `AUTH_MODE=dev` (never in production).
+
+## 2a. Phone builds (EAS)
+
+The iOS and Android apps are built in Expo's cloud (**EAS Build**, project `@ymarq/ymarq`), so no Android Studio is needed and Xcode is only needed for the iOS Simulator. Profiles live in `eas.json`:
+
+| Profile | What you get | Use it for |
+|---|---|---|
+| `development` | Dev client: the app shell, which loads your code from `npx expo start` | Day-to-day work with native modules (Firebase, notifications) |
+| `preview` | The whole app inside (iOS Simulator `.app`, Android `.apk`) | Trying a branch without a dev server |
+| `production` | Store builds (needs Apple/Google accounts, #41) | Releases (#18, #19) |
+
+**Start a build**, either way:
+- From your Mac: `npx eas-cli@latest build -p ios --profile development` (or `-p android`, or `-p all`).
+- From GitHub: **Actions → EAS build → Run workflow**, pick the profile and platform. Needs the repo secret `EXPO_TOKEN`.
+
+Builds take about 10–20 minutes; follow them at https://expo.dev/accounts/ymarq/projects/ymarq/builds.
+
+**iOS Simulator:** `npx eas-cli@latest build:run -p ios --latest` downloads the newest simulator build and installs it in the Simulator (it opens the Simulator if needed). For a `development` build, then run `npx expo start` and press `i`. The app connects to it.
+
+**Android:** open the build page on the phone and tap **Install** (allow installs from the browser), or with an emulator running: `npx eas-cli@latest build:run -p android --latest`. A `development` build connects to `npx expo start` on the same Wi-Fi.
+
+**When to rebuild:** only after adding a library with native code or changing `app.json`. JavaScript changes reach a development build through `npx expo start` without rebuilding.
 
 ## 2b. Run the API (`server/`)
 
