@@ -2,8 +2,8 @@ import { Stack } from 'expo-router';
 import { Linking, ScrollView, StyleSheet, View } from 'react-native';
 import { Text } from 'react-native-paper';
 
-/** Where people send privacy questions and deletion requests. Replace with a support email before launch. */
-export const PRIVACY_CONTACT = 'https://github.com/euhoro/YmarqApp/issues';
+/** Where people send privacy questions and deletion requests. */
+export const PRIVACY_CONTACT = 'e989828@gmail.com';
 export const PRIVACY_UPDATED = '2026-10-21';
 
 const SECTIONS: { title: string; body: string }[] = [
@@ -75,9 +75,9 @@ export function PrivacyScreen() {
         variant="bodyMedium"
         style={styles.link}
         accessibilityRole="link"
-        onPress={() => Linking.openURL(PRIVACY_CONTACT)}
+        onPress={() => Linking.openURL(`mailto:${PRIVACY_CONTACT}`)}
       >
-        Contact us
+        Email us
       </Text>
     </ScrollView>
   );

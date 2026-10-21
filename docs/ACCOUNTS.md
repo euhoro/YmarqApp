@@ -7,6 +7,8 @@ Last checked: 2026-10-21.
 
 **Sign-in email:** all accounts below were created with the owner's email labelled **e98**.
 
+**Public support email:** `e989828@gmail.com`, shown on the privacy policy (https://ymarq-app.vercel.app/privacy) for questions and deletion requests.
+
 ## At a glance
 
 | Service | Used for | Account / project | Console |
