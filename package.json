@@ -53,10 +53,11 @@
     "test": "jest",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "build:web": "expo export --platform web",
+    "build:web": "node scripts/check-release-env.mjs && expo export --platform web",
     "verify": "npm run lint && npm run typecheck && npm run format:check && npm test -- --ci",
     "test:e2e": "playwright test",
-    "roadmap": "node scripts/roadmap.mjs"
+    "roadmap": "node scripts/roadmap.mjs",
+    "eas-build-pre-install": "node scripts/check-release-env.mjs"
   },
   "private": true,
   "jest": {
