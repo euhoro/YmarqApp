@@ -74,7 +74,7 @@ Project `ymarq-35862` (Google account of the owner). Only **Authentication** is 
 | The registered apps: Web, iOS and Android (`com.ymarq.app`) | [Project settings → General](https://console.firebase.google.com/project/ymarq-35862/settings/general) |
 | Admin key (service account) | [Project settings → Service accounts](https://console.firebase.google.com/project/ymarq-35862/settings/serviceaccounts/adminsdk) |
 
-**Test number:** `+1 650-555-1234`, code `123456`. No SMS is sent, but its country must still be allowed in the SMS region policy.
+**Test number:** `+1 650-555-1234`. Its code is **not** written here, because this repo is public and the code signs in on the live site. The owner keeps it (Firebase console → Authentication → Sign-in method → Phone → test numbers). Changed 2026-10-21; change it again if it leaks. No SMS is sent, but its country must still be allowed in the SMS region policy.
 
 **Files downloaded from Firebase** (keep them in `~/Downloads/ymarq-important/`, never in git):
 
