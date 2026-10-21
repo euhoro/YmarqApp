@@ -5,6 +5,8 @@ and where its keys are. **No secret values belong in this file**, only names and
 
 Last checked: 2026-10-21.
 
+**Sign-in email:** all accounts below were created with the owner's email labelled **e98**.
+
 ## At a glance
 
 | Service | Used for | Account / project | Console |
@@ -45,7 +47,10 @@ Team `ymarq`, logged in on the owner's Mac (`npx vercel@latest … --scope ymarq
 | `ymarq-app-api` | The API (`server/`, Hono) | https://ymarq-app-api.vercel.app/health | `server` |
 
 - **Deploys:** every merge to `master` deploys both to production; every PR gets preview URLs, which are behind Vercel's login.
-- **Settings (Environment Variables)** for the website, `ymarq-app` → Settings → Environment Variables: none yet, so the live website runs on **fake data and fake sign-in**. Switching it to the real API is #53 / #89 (needs `EXPO_PUBLIC_DATA_SOURCE=api`, `EXPO_PUBLIC_API_URL`, `EXPO_PUBLIC_AUTH=firebase` and the `EXPO_PUBLIC_FIREBASE_*` values).
+- **Settings (Environment Variables)** for the website, `ymarq-app` → Settings → Environment Variables (Production only, since 2026-10-21):
+  - `EXPO_PUBLIC_DATA_SOURCE=api` and `EXPO_PUBLIC_API_URL=https://ymarq-app-api.vercel.app`
+  - `EXPO_PUBLIC_AUTH=firebase` and the six `EXPO_PUBLIC_FIREBASE_*` values (public identifiers, saved as *Config*)
+  - A production build without them is refused on purpose (`scripts/check-release-env.mjs`). Previews have none, so they run on fake data.
 - **Settings for the API**, `ymarq-app-api` → Settings → Environment Variables:
   - `STORE=postgres` (Production)
   - `DATABASE_URL` and the other `PG*` / `POSTGRES_*` values: added by the Neon integration. **Preview and Production use the same database.**
@@ -64,7 +69,7 @@ Project `ymarq-35862` (Google account of the owner). Only **Authentication** is 
 |---|---|
 | Sign-in method (Phone: on), **test numbers** | [Authentication → Sign-in method](https://console.firebase.google.com/project/ymarq-35862/authentication/providers) |
 | **Allowed domains** (`localhost`, `ymarq-app.vercel.app`, …) | [Authentication → Settings → Authorized domains](https://console.firebase.google.com/project/ymarq-35862/authentication/settings) |
-| **SMS region policy** (which countries can get codes; now Israel only) | Authentication → Settings → SMS region policy |
+| **SMS region policy** (which countries can get codes; now Israel and US) | Authentication → Settings → SMS region policy |
 | Billing plan (Blaze: real SMS) and budget alert (#39) | [Usage and billing](https://console.firebase.google.com/project/ymarq-35862/usage/details) |
 | The registered apps: Web, iOS and Android (`com.ymarq.app`) | [Project settings → General](https://console.firebase.google.com/project/ymarq-35862/settings/general) |
 | Admin key (service account) | [Project settings → Service accounts](https://console.firebase.google.com/project/ymarq-35862/settings/serviceaccounts/adminsdk) |
