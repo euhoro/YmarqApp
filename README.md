@@ -10,6 +10,7 @@ for **Android, iOS and Web**.
 - **Plan and decisions:** [`docs/REVIVAL_2026.md`](docs/REVIVAL_2026.md)
 - **Launch goal:** [Definition of Done](docs/REVIVAL_2026.md#0-definition-of-done-launch): two users can register, log in, sell, search, chat and get notified, against the real server
 - **Live web app:** https://ymarq-app.vercel.app (deploys from `master`)
+- **Privacy policy:** https://ymarq-app.vercel.app/privacy (the URL for the App Store and Google Play)
 - **Roadmap and what to work on next:** [issue #22](https://github.com/euhoro/YmarqApp/issues/22)
 
 ## Run it
