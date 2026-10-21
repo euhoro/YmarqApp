@@ -39,6 +39,7 @@ describe('privacy policy', () => {
     expect(screen.getByText(/Your phone number, to sign you in/)).toBeTruthy();
     expect(screen.getByText(/Firebase Authentication/)).toBeTruthy();
     expect(screen.getByText(/camera or your photo library/)).toBeTruthy();
+    expect(screen.getByText(/e989828@gmail\.com/)).toBeTruthy();
     expect(app.getPathname()).toBe('/privacy');
   });
 });
