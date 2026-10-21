@@ -40,9 +40,20 @@ describe('check-release-env', () => {
       expect(result.status).toBe(1);
       expect(result.output).toContain('EXPO_PUBLIC_DATA_SOURCE must be "api"');
       expect(result.output).toContain('EXPO_PUBLIC_AUTH must be "firebase"');
-      expect(result.output).toContain('EXPO_PUBLIC_FIREBASE_API_KEY is missing');
     },
   );
+
+  it('requires the Firebase web config for the website only', () => {
+    const native = {
+      EXPO_PUBLIC_DATA_SOURCE: 'api',
+      EXPO_PUBLIC_API_URL: REAL.EXPO_PUBLIC_API_URL,
+      EXPO_PUBLIC_AUTH: 'firebase',
+    };
+    const web = check({ VERCEL_ENV: 'production', ...native });
+    expect(web.status).toBe(1);
+    expect(web.output).toContain('EXPO_PUBLIC_FIREBASE_API_KEY is missing');
+    expect(check({ EAS_BUILD_PROFILE: 'production', ...native }).status).toBe(0);
+  });
 
   it('accepts a release build with the real API and Firebase', () => {
     expect(check({ VERCEL_ENV: 'production', ...REAL }).status).toBe(0);

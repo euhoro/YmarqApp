@@ -3,3 +3,6 @@
 jest.mock('@/services/notifications/expoPushClient', () =>
   jest.requireActual('@/services/notifications/expoPushClient.web'),
 );
+
+// The native Firebase SDK can't load in Jest. Tests that need it mock its functions themselves.
+jest.mock('@react-native-firebase/auth', () => ({}));

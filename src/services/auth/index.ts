@@ -7,8 +7,9 @@ import { createFirebaseAuthService } from './FirebaseAuthService';
 export { AuthError } from './AuthService';
 export type { AuthService, PhoneVerification } from './AuthService';
 
-/** `EXPO_PUBLIC_AUTH`: fake (default, demo code 123456) or firebase (real SMS; web only for now). */
+/** `EXPO_PUBLIC_AUTH`: fake (default, demo code 123456) or firebase (real SMS: JS SDK on web, native SDK on iOS/Android). */
 export function createAuthService(): AuthService {
-  if (getAuthMode() === 'firebase') return createFirebaseAuthService(getFirebaseConfig());
+  // The web config is read lazily: iOS/Android don't need it (they bundle their own Firebase files).
+  if (getAuthMode() === 'firebase') return createFirebaseAuthService(() => getFirebaseConfig());
   return new FakeAuthService(getFakeAuthSignedIn() ? DEMO_USER : null);
 }

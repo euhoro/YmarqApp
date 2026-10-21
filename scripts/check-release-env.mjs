@@ -14,7 +14,9 @@ if (release) {
     problems.push('EXPO_PUBLIC_API_URL must be the https:// address of the Ymarq API');
   }
   if (env.EXPO_PUBLIC_AUTH !== 'firebase') problems.push('EXPO_PUBLIC_AUTH must be "firebase"');
-  for (const name of ['API_KEY', 'AUTH_DOMAIN', 'PROJECT_ID', 'APP_ID']) {
+  // The website needs the Firebase web config; the iOS/Android apps bundle their own Firebase files.
+  const webBuild = !env.EAS_BUILD_PROFILE;
+  for (const name of webBuild ? ['API_KEY', 'AUTH_DOMAIN', 'PROJECT_ID', 'APP_ID'] : []) {
     if (!env[`EXPO_PUBLIC_FIREBASE_${name}`])
       problems.push(`EXPO_PUBLIC_FIREBASE_${name} is missing`);
   }
