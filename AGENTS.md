@@ -4,6 +4,7 @@ Ymarq is being rebuilt from a 2014 Android prototype. The plan, feature map, dec
 [`docs/REVIVAL_2026.md`](docs/REVIVAL_2026.md). Read it before starting work. Don't edit its statuses in feature PRs: they are updated once per wave,
 so parallel PRs don't conflict.
 Starting a session or picking up unfinished work: follow [`docs/RESUMING.md`](docs/RESUMING.md).
+Accounts, consoles and how external services are wired: [`docs/ACCOUNTS.md`](docs/ACCOUNTS.md) (keep it current when you change one).
 
 ## Project rules
 
