@@ -101,6 +101,25 @@ describe('sign-in and auth gate', () => {
     expect(await screen.findByText(/isn't available for this country/)).toBeTruthy();
   });
 
+  it("adds the provider's error code to the default text for unknown errors", async () => {
+    class BrokenAuth extends FakeAuthService {
+      async startPhoneSignIn(): Promise<never> {
+        throw Object.assign(new Error('boom'), { code: 'auth/something-new' });
+      }
+    }
+    const app = renderApp(new BrokenAuth(null));
+    await app;
+
+    await enterPhone('0501234567');
+    await fireEvent.press(screen.getByRole('button', { name: 'Send code' }));
+
+    expect(
+      await screen.findByText(
+        "Couldn't send the code. Check the number and try again. (auth/something-new)",
+      ),
+    ).toBeTruthy();
+  });
+
   it('signs in with the right code; a new user picks a name, then lands on the feed', async () => {
     const auth = new FakeAuthService(null);
     const app = renderApp(auth);

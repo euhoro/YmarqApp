@@ -9,9 +9,16 @@ import { COUNTRY_CODES, toE164 } from './phone';
 
 const CODE_LENGTH = 6;
 
-/** The service's own explanation when it has one (e.g. "SMS isn't enabled for this country"). */
-const messageFor = (cause: unknown, fallback: string) =>
-  cause instanceof AuthError ? cause.message : fallback;
+/**
+ * The service's own explanation when it has one (e.g. "SMS isn't enabled for this country").
+ * Otherwise the default text, plus the provider's error code when there is one, so a screenshot
+ * tells us what went wrong.
+ */
+const messageFor = (cause: unknown, fallback: string) => {
+  if (cause instanceof AuthError) return cause.message;
+  const code = (cause as { code?: unknown } | null)?.code;
+  return typeof code === 'string' && code ? `${fallback} (${code})` : fallback;
+};
 
 /**
  * Phone sign-in in two steps: number → SMS code. Registration and login are the same flow.
